@@ -5,19 +5,22 @@ import "./Login.css";
 
 function Login() {
   return (
-    <>
-      <h1>Caritas Volunteer Login</h1>
-      <Form>
-        <Form.Group>
+    <section className="login-page">
+      <h1>Login</h1>
+      <Form className="login-form">
+        <Form.Group className="row">
           <Form.Label>Email:</Form.Label>
+
           <Form.Control
             type="email"
             placeholder="Enter your email..."
             required
           />
         </Form.Group>
-        <Form.Group>
-          <Form.Label>Password:</Form.Label>
+        <Form.Group className="row">
+          <Form.Label column sm={2}>
+            Password:
+          </Form.Label>
           <Form.Control
             type="password"
             placeholder="Enter your password..."
@@ -28,7 +31,7 @@ function Login() {
           Login
         </Button>
       </Form>
-    </>
+    </section>
   );
 }
 
