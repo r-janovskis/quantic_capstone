@@ -24,8 +24,11 @@
 }
 
 .login-form .row {
-  margin: 1rem 0;
   width: 80%;
   display: grid;
   grid-template-columns: 1fr 4fr;
+}
+
+.login-form button {
+  margin-top: 1rem;
 }

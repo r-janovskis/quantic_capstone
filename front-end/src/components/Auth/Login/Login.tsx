@@ -1,17 +1,41 @@
+import { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
 import "./Login.css";
 
 function Login() {
+  const [validated, setValidated] = useState(false);
+  function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
+    //event.preventDefault();
+    let email: string = event.target.email.value;
+    let password: string = event.target.password.value;
+    const form: HTMLFormElement = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    setValidated(true);
+
+    alert(`Form submitted\n${email}\n${password}`);
+  }
+
   return (
     <section className="login-page">
       <h1>Login</h1>
-      <Form className="login-form">
+      <Form
+        className="login-form"
+        noValidate
+        validated={validated}
+        onSubmit={handleSubmit}
+      >
         <Form.Group className="row">
-          <Form.Label>Email:</Form.Label>
+          <Form.Label htmlFor="email">Email:</Form.Label>
 
           <Form.Control
+            id="email"
+            name="email"
             type="email"
             placeholder="Enter your email..."
             required
@@ -22,6 +46,8 @@ function Login() {
             Password:
           </Form.Label>
           <Form.Control
+            id="password"
+            name="password"
             type="password"
             placeholder="Enter your password..."
             required
