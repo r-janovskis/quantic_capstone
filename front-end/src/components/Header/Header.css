@@ -1,0 +1,9 @@
+header {
+  background-color: coral;
+  display: flex;
+  justify-content: space-between;
+}
+
+#navigation-bar {
+  height: 100%;
+}

@@ -25,7 +25,7 @@ function Login() {
             required
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
+        <Button variant="primary" type="submit" size="lg">
           Login
         </Button>
       </Form>
