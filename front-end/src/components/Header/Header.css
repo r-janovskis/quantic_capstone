@@ -2,8 +2,23 @@ header {
   background-color: coral;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
 }
 
-#navigation-bar {
-  height: 100%;
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+
+  margin: 0;
+}
+
+.main-navigation-bar {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.divider-line,
+.signup-link {
+  margin: auto;
 }

@@ -8,13 +8,14 @@ import "./Header.css";
 function Header() {
   return (
     <header>
-      <h3>Caritas Volunteers</h3>
-      <Nav id="navigation-bar" className="bg-body-tertiary">
+      <p className="header-title">Caritas Volunteers</p>
+      <Nav className="main-navigation-bar">
         <NavLink to="auth/login">
           <Button variant="primary">Login</Button>
         </NavLink>
-        <NavLink to="auth/signup">
-          <Button variant="primary">Sign up</Button>
+        <p className="divider-line">/</p>
+        <NavLink className="signup-link" to="auth/signup">
+          Sign up
         </NavLink>
       </Nav>
     </header>
