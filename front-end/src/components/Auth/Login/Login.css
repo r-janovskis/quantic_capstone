@@ -32,3 +32,12 @@
 .login-form button {
   margin-top: 1rem;
 }
+
+.link-to-signup {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.link-to-signup p {
+  margin: 0;
+}

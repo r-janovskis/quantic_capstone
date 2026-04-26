@@ -5,9 +5,7 @@ function Root() {
   return (
     <>
       <AuthHeader />
-      <main>
-        <Outlet />
-      </main>
+      <Outlet />
     </>
   );
 }
