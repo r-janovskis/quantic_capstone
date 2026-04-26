@@ -46,7 +46,7 @@ function Login() {
             />
           </Form.Group>
           <Form.Group className="row">
-            <Form.Label column sm={2}>
+            <Form.Label column htmlFor="password">
               Password:
             </Form.Label>
             <Form.Control
