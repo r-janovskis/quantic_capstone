@@ -7,13 +7,15 @@ import "./Header.css";
 function Header() {
   return (
     <header>
-      <p className="header-title">Caritas Volunteers</p>
+      <NavLink to="/" className="header-title">
+        Caritas Volunteers
+      </NavLink>
       <Nav className="main-navigation-bar">
-        <NavLink to="auth/login">
+        <NavLink to="/auth/login">
           <Button variant="primary">Login</Button>
         </NavLink>
         <p className="divider-line">/</p>
-        <NavLink className="signup-link" to="auth/signup">
+        <NavLink className="signup-link" to="/auth/signup">
           Sign up
         </NavLink>
       </Nav>

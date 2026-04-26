@@ -6,7 +6,9 @@ import "./Login.css";
 
 function Login() {
   const [validated, setValidated] = useState(false);
-  function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
+  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = (
+    event: React.SubmitEvent<HTMLFormElement>
+  ) => {
     //event.preventDefault();
     let email: string = event.target.email.value;
     let password: string = event.target.password.value;
@@ -19,7 +21,7 @@ function Login() {
     setValidated(true);
 
     alert(`Form submitted\n${email}\n${password}`);
-  }
+  };
 
   return (
     <section className="login-page">

@@ -4,6 +4,7 @@ import Root from "./components/Root/Root";
 import Home from "./components/Home/Home";
 import Login from "./components/Auth/Login/Login";
 import SignUp from "./components/Auth/SignUp/SignUp";
+import AuthRoot from "./components/Auth/AuthRoot/AuthRoot";
 
 import "./App.css";
 
@@ -16,7 +17,7 @@ function App() {
         <Route path="/" element={<Root />}>
           {/* The Home component is used as the home page of the application */}
           <Route index element={<Home />} />
-          <Route path="/auth">
+          <Route path="auth" element={<AuthRoot />}>
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<SignUp />} />
           </Route>
