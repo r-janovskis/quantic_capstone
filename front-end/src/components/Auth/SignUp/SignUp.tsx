@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Alert from "react-bootstrap/Alert";
 
 import "./SignUp.css";
 
@@ -14,6 +15,10 @@ function SignUp() {
     number: false,
     specialChar: false,
   });
+
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [APIErrorMessage, setAPIErrorMessage] = useState("");
 
   const handlePassword: React.ChangeEventHandler<HTMLInputElement> = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -47,6 +52,9 @@ function SignUp() {
   ) => {
     const form: HTMLFormElement = event.currentTarget;
 
+    // We always want to stay on the signup page
+    event.preventDefault();
+
     const email = form.elements.namedItem("email") as HTMLInputElement;
     const password = form.elements.namedItem("password") as HTMLInputElement;
     const confirmPassword = form.elements.namedItem(
@@ -61,8 +69,6 @@ function SignUp() {
       !passwordChecks.number ||
       !passwordChecks.specialChar
     ) {
-      event.preventDefault();
-      event.stopPropagation();
       setValidated(true);
       return;
     }
@@ -70,27 +76,36 @@ function SignUp() {
     // Check if passwords match and user just tries to brute force it
     // In that case we block it
     if (confirmPassword.value !== password.value) {
-      event.preventDefault();
-      event.stopPropagation();
       setValidated(true);
       return;
     }
 
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    } else {
-      alert(
-        `Form submitted\n${email.value}\n${password.value}\n${confirmPassword.value}`
-      );
+    // If we had set custom validity error for email we remove it
+    email.setCustomValidity("");
+
+    // Form is valid
+    if (form.checkValidity()) {
+      // we send data to back end
+      // validate data
+      const validationPassed: boolean = true;
+      if (validationPassed) {
+        setShowSuccess(true);
+        setShowError(false);
+      } else {
+        setAPIErrorMessage("Email already in use!");
+        setShowError(true);
+        setShowSuccess(false);
+        email.setCustomValidity("Email already in use!");
+        setValidated(true);
+      }
     }
 
     setValidated(true);
   };
 
   return (
-    <main>
-      <section className="signup-page">
+    <main className="signup-page">
+      <section>
         <h1>Sign Up</h1>
         <Form
           className="signup-form"
@@ -155,9 +170,16 @@ function SignUp() {
             Sign Up
           </Button>
         </Form>
+        <Alert show={showSuccess} variant="success">
+          You have successfully signed up! Head to{" "}
+          <NavLink to="/auth/login">login page</NavLink> to log in.
+        </Alert>
+        <Alert show={showError} variant="danger">
+          {APIErrorMessage}
+        </Alert>
       </section>
       <section className="link-to-login">
-        <p>Already have an account yet?</p>
+        <p>Already have an account?</p>
         <NavLink to="/auth/login">Login</NavLink>
       </section>
     </main>
