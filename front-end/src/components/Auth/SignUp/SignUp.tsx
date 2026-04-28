@@ -18,9 +18,9 @@ function SignUp() {
     specialChar: false,
   });
 
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [showError, setShowError] = useState(false);
-  const [APIErrorMessage, setAPIErrorMessage] = useState("");
+  const [showMessage, setShowMessage] = useState(false);
+  const [messageType, setMessageType] = useState("");
+  const [APIMessage, setAPIMessage] = useState("");
 
   const handlePassword: React.ChangeEventHandler<HTMLInputElement> = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -87,119 +87,102 @@ function SignUp() {
 
     // Form is valid
     if (form.checkValidity()) {
+      setValidated(true);
       // we send data to back end
       authServices
         .signUp(email.value, password.value)
         .then((response) => {
           if (response.status === "Success") {
-            setShowSuccess(true);
-            setShowError(false);
-            alert(`Status: ${response.status}\nMessage: ${response.message}`);
+            setShowMessage(true);
+            setMessageType("success");
+            setAPIMessage(response.message);
+            // alert(`Status: ${response.status}\nMessage: ${response.message}`);
+            // Scenario where email address is already in use...
           } else {
-            setShowSuccess(false);
-            setShowError(true);
-            setAPIErrorMessage(response.message);
-            alert(`Status: ${response.status}\nMessage: ${response.message}`);
+            setShowMessage(true);
+            setMessageType("danger");
+            setAPIMessage(response.message);
+            // alert(`Status: ${response.status}\nMessage: ${response.message}`);
           }
         })
+        // Handle errors where we don't even reach the server
+        // or don't get the response
         .catch(() => {
-          setShowSuccess(false);
-          setShowError(true);
-          setAPIErrorMessage(
-            "Couldn not reach the server. Please try again later."
-          );
+          setShowMessage(true);
+          setMessageType("danger");
+          setAPIMessage("Couldn not reach the server. Please try again later.");
         });
-      // validate data
-      // const validationPassed: boolean = true;
-      // if (validationPassed) {
-
-      // } else {
-      //   setAPIErrorMessage("Email already in use!");
-      //   setShowError(true);
-      //   setShowSuccess(false);
-      //   email.setCustomValidity("Email already in use!");
-      //   setValidated(true);
-      // }
     }
-
-    setValidated(true);
   };
 
   return (
     <main className="signup-page">
-      <section>
-        <h1>Sign Up</h1>
-        <Form
-          className="signup-form"
-          noValidate
-          validated={validated}
-          onSubmit={handleSubmit}
-        >
-          <Form.Group className="row">
-            <Form.Label htmlFor="email">Email:</Form.Label>
+      <h1>Sign Up</h1>
+      <Form
+        className="signup-form"
+        noValidate
+        validated={validated}
+        onSubmit={handleSubmit}
+      >
+        <Form.Group className="row">
+          <Form.Label htmlFor="email">Email:</Form.Label>
 
-            <Form.Control
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Enter your email..."
-              required
-            />
-          </Form.Group>
-          <Form.Group className="row">
-            <Form.Label htmlFor="password">Password:</Form.Label>
-            <Form.Control
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Enter your password..."
-              onChange={handlePassword}
-              required
-            />
-            <ul className="password-checklist">
-              <li style={{ color: passwordChecks.length ? "green" : "red" }}>
-                At least 10 characters
-              </li>
-              <li style={{ color: passwordChecks.uppercase ? "green" : "red" }}>
-                At least one capital letter
-              </li>
-              <li style={{ color: passwordChecks.number ? "green" : "red" }}>
-                At least one number
-              </li>
-              <li
-                style={{ color: passwordChecks.specialChar ? "green" : "red" }}
-              >
-                At least one special character
-              </li>
-            </ul>
-          </Form.Group>
-          <Form.Group className="row">
-            <Form.Label htmlFor="confirm_password">Repeat Password:</Form.Label>
-            <Form.Control
-              id="confirm_password"
-              name="confirm_password"
-              type="password"
-              placeholder="Repeat your password..."
-              onChange={handleConfirmPassword}
-              isInvalid={!!passwordError}
-              required
-            />
-            <Form.Control.Feedback type="invalid">
-              {passwordError}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Button variant="primary" type="submit" size="lg">
-            Sign Up
-          </Button>
-        </Form>
-        <Alert show={showSuccess} variant="success">
-          You have successfully signed up! Head to{" "}
-          <NavLink to="/auth/login">login page</NavLink> to log in.
-        </Alert>
-        <Alert show={showError} variant="danger">
-          {APIErrorMessage}
-        </Alert>
-      </section>
+          <Form.Control
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Enter your email..."
+            pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+            required
+          />
+        </Form.Group>
+        <Form.Group className="row">
+          <Form.Label htmlFor="password">Password:</Form.Label>
+          <Form.Control
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Enter your password..."
+            onChange={handlePassword}
+            required
+          />
+          <ul className="password-checklist">
+            <li style={{ color: passwordChecks.length ? "green" : "red" }}>
+              At least 10 characters
+            </li>
+            <li style={{ color: passwordChecks.uppercase ? "green" : "red" }}>
+              At least one capital letter
+            </li>
+            <li style={{ color: passwordChecks.number ? "green" : "red" }}>
+              At least one number
+            </li>
+            <li style={{ color: passwordChecks.specialChar ? "green" : "red" }}>
+              At least one special character
+            </li>
+          </ul>
+        </Form.Group>
+        <Form.Group className="row">
+          <Form.Label htmlFor="confirm_password">Repeat Password:</Form.Label>
+          <Form.Control
+            id="confirm_password"
+            name="confirm_password"
+            type="password"
+            placeholder="Repeat your password..."
+            onChange={handleConfirmPassword}
+            isInvalid={!!passwordError}
+            required
+          />
+          <Form.Control.Feedback type="invalid">
+            {passwordError}
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Button variant="primary" type="submit" size="lg">
+          Sign Up
+        </Button>
+      </Form>
+      <Alert show={showMessage} variant={messageType}>
+        {APIMessage}
+      </Alert>
       <section className="link-to-login">
         <p>Already have an account?</p>
         <NavLink to="/auth/login">Login</NavLink>
