@@ -25,7 +25,7 @@ def signup(payload: User):
 
     # TODO: Save user to DB
     emails.append(payload.email)
-    return {"status": "Success", "message": "Sign up successful!", "password": hasshed_password}
+    return {"status": "Success", "message": 'You have successfully signed up! Head to the login page to continue setting up account.'}
 
 @router.post("/login", response_model=dict[str, str])
 def login(payload: User):
