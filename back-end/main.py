@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel
 
 import auth
@@ -11,6 +12,14 @@ class APIResponse(SQLModel):
 
 
 app = FastAPI()
+# Define middleware to allow CORS
+# Port depends on which the front-end is running
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/", response_model=APIResponse, status_code=200)
 def home() -> APIResponse:

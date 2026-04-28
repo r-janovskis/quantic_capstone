@@ -12,6 +12,8 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/signup", response_model=dict[str, str])
 def signup(payload: User):
+
+    # TODO: Check DB if we have this user
     emails: list[str] = []
 
     # TODO: Check if email is already in use
