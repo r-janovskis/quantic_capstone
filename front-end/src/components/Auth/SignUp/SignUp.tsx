@@ -4,6 +4,8 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 
+import authServices from "../../../services/authAPI";
+
 import "./SignUp.css";
 
 function SignUp() {
@@ -86,18 +88,38 @@ function SignUp() {
     // Form is valid
     if (form.checkValidity()) {
       // we send data to back end
+      authServices
+        .signUp(email.value, password.value)
+        .then((response) => {
+          if (response.status === "Success") {
+            setShowSuccess(true);
+            setShowError(false);
+            alert(`Status: ${response.status}\nMessage: ${response.message}`);
+          } else {
+            setShowSuccess(false);
+            setShowError(true);
+            setAPIErrorMessage(response.message);
+            alert(`Status: ${response.status}\nMessage: ${response.message}`);
+          }
+        })
+        .catch(() => {
+          setShowSuccess(false);
+          setShowError(true);
+          setAPIErrorMessage(
+            "Couldn not reach the server. Please try again later."
+          );
+        });
       // validate data
-      const validationPassed: boolean = true;
-      if (validationPassed) {
-        setShowSuccess(true);
-        setShowError(false);
-      } else {
-        setAPIErrorMessage("Email already in use!");
-        setShowError(true);
-        setShowSuccess(false);
-        email.setCustomValidity("Email already in use!");
-        setValidated(true);
-      }
+      // const validationPassed: boolean = true;
+      // if (validationPassed) {
+
+      // } else {
+      //   setAPIErrorMessage("Email already in use!");
+      //   setShowError(true);
+      //   setShowSuccess(false);
+      //   email.setCustomValidity("Email already in use!");
+      //   setValidated(true);
+      // }
     }
 
     setValidated(true);
