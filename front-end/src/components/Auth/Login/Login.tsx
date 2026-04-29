@@ -43,7 +43,7 @@ function Login() {
             email.setCustomValidity("response.message");
           }
         })
-        .catch((error) => {
+        .catch(() => {
           setMessageType("Danger");
           setAPIMessage("Something went wrong! Please try again later.");
         });
