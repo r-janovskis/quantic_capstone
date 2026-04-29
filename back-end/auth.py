@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 import bcrypt
+from security import create_token
 
 # Class to represent a user that will be signed up
 class User(BaseModel):
@@ -31,10 +32,21 @@ def signup(payload: User):
 def login(payload: User):
 
     # TODO: Check DB if we have this user
-    # TODO: Check if password hash is correct
-    # is_valid_password = bcrypt.checkpw(payload.password.encode("utf-8"), stored_hash_from_db)
-    # TODO: If any of the checks fail, return error
+    valid_user = True
+    if payload.email not in ['reinis@abc.com', 'test@xyz@com']:
+        valid_user = False
 
+    # TODO: Check if password hash is correct
+    if not payload.password:
+        valid_user = False
+    # is_valid_password = bcrypt.checkpw(payload.password.encode("utf-8"), stored_hash_from_db)
+    
     # TODO: Generate JWT token
+    token = create_token(payload.email)
+
+    # TODO: If any of the checks fail, return error
+    if not valid_user:
+        return {"status": "Error", "message": "Incorrect email or password"}
+    
     # TODO: Return JWT token and let user through
-    return {"status": "Success", "message": "Login successful!", "token": "sample_token"}
+    return {"status": "Success", "message": "Login successful!", "token": token}
