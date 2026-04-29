@@ -102,6 +102,7 @@ function SignUp() {
             setShowMessage(true);
             setMessageType("danger");
             setAPIMessage(response.message);
+            email.setCustomValidity(response.message);
             // alert(`Status: ${response.status}\nMessage: ${response.message}`);
           }
         })

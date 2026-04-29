@@ -2,31 +2,60 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Alert from "react-bootstrap/Alert";
+import authServices from "../../../services/authAPI";
 
 import "./Login.css";
 
 function Login() {
   const [validated, setValidated] = useState(false);
+
+  const [showMessage, setShowMessage] = useState(false);
+  const [messageType, setMessageType] = useState("");
+  const [APIMessage, setAPIMessage] = useState("");
+
   const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = (
     event: React.SubmitEvent<HTMLFormElement>
   ) => {
-    //event.preventDefault();
-    let email: string = event.target.email.value;
-    let password: string = event.target.password.value;
+    event.preventDefault();
+
     const form: HTMLFormElement = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
+    const email = form.elements.namedItem("email") as HTMLInputElement;
+    let password = form.elements.namedItem("password") as HTMLInputElement;
+
+    // Clear custom validity errro from email field
+    // In case we had set it previously (like email is already in use)
+    email.setCustomValidity("");
+
+    if (form.checkValidity()) {
+      authServices
+        .login(email.value, password.value)
+        .then((response) => {
+          if (response.status === "Success") {
+            setMessageType("success");
+            setAPIMessage(
+              `Message: ${response.message}\nToken: ${response.token}\nUser status: ${response.user_status}`
+            );
+          } else if (response.status === "Error") {
+            setMessageType("danger");
+            setAPIMessage(`Message; ${response.message}`);
+
+            email.setCustomValidity("response.message");
+          }
+        })
+        .catch((error) => {
+          setMessageType("Danger");
+          setAPIMessage("Something went wrong! Please try again later.");
+        });
+      setShowMessage(true);
     }
 
     setValidated(true);
-
-    alert(`Form submitted\n${email}\n${password}`);
   };
 
   return (
-    <main>
-      <section className="login-page">
+    <main className="login-page">
+      <section>
         <h1>Login</h1>
         <Form
           className="login-form"
@@ -46,9 +75,7 @@ function Login() {
             />
           </Form.Group>
           <Form.Group className="row">
-            <Form.Label column htmlFor="password">
-              Password:
-            </Form.Label>
+            <Form.Label htmlFor="password">Password:</Form.Label>
             <Form.Control
               id="password"
               name="password"
@@ -61,6 +88,9 @@ function Login() {
             Login
           </Button>
         </Form>
+        <Alert show={showMessage} variant={messageType}>
+          {APIMessage}
+        </Alert>
       </section>
       <section className="link-to-signup">
         <p>Don't have an account yet?</p>
