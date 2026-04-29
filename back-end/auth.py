@@ -15,7 +15,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 def signup(payload: User):
 
     # TODO: Check DB if we have this user
-    emails: list[str] = []
+    emails: list[str] = ['reinis1@abc.com', 'reinis2@abc.com']
 
     # TODO: Check if email is already in use
     if payload.email in emails:
@@ -49,4 +49,4 @@ def login(payload: User):
         return {"status": "Error", "message": "Incorrect email or password"}
     
     # TODO: Return JWT token and let user through
-    return {"status": "Success", "message": "Login successful!", "token": token}
+    return {"status": "Success", "message": "Login successful!", "token": token, "user_status": "New"}
