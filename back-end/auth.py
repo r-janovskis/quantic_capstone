@@ -1,32 +1,36 @@
-from fastapi import APIRouter
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends
+from sqlmodel import Session
 import bcrypt
 from security import create_token
+from database import get_session
+from database.models.user import User, UserBase
+from database.repositories.user_repo import get_user_by_email, create_user
 
-# Class to represent a user that will be signed up
-class User(BaseModel):
-    email: str
+# Class to represent a user that will be received from the client
+class UserRequest(UserBase):
     password: str
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/signup", response_model=dict[str, str])
-def signup(payload: User):
+def signup(payload: UserRequest, session: Session = Depends(get_session)):
 
     # TODO: Check DB if we have this user
-    emails: list[str] = ['reinis1@abc.com', 'reinis2@abc.com']
+    
+    user_from_db = get_user_by_email(session, payload.email)
 
     # TODO: Check if email is already in use
-    if payload.email in emails:
+    if user_from_db:
         return {"status": "Error", "message": "Email alaready in use!"}
 
     
-    hasshed_password = bcrypt.hashpw(payload.password.encode("utf-8"), bcrypt.gensalt())
+    hashed_password = bcrypt.hashpw(payload.password.encode("utf-8"), bcrypt.gensalt())
 
     # TODO: Save user to DB
-    emails.append(payload.email)
+    create_user(session, payload.email, hashed_password)
     return {"status": "Success", "message": 'You have successfully signed up! Head to the login page to continue setting up account.'}
+
 
 @router.post("/login", response_model=dict[str, str])
 def login(payload: User):

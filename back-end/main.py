@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel
+from contextlib import asynccontextmanager
+import database
 
 import auth
 
@@ -10,8 +12,13 @@ class APIResponse(SQLModel):
     status_code: int
 
 
+# Initialise database when app is started
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    database.create_db_and_tables()
+    yield
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 # Define middleware to allow CORS
 # Port depends on which the front-end is running
 app.add_middleware(
@@ -20,6 +27,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.get("/", response_model=APIResponse, status_code=200)
 def home() -> APIResponse:
