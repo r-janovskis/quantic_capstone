@@ -16,41 +16,42 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/signup", response_model=dict[str, str])
 def signup(payload: UserRequest, session: Session = Depends(get_session)):
 
-    # TODO: Check DB if we have this user
-    
     user_from_db = get_user_by_email(session, payload.email)
 
-    # TODO: Check if email is already in use
     if user_from_db:
         return {"status": "Error", "message": "Email alaready in use!"}
 
     
     hashed_password = bcrypt.hashpw(payload.password.encode("utf-8"), bcrypt.gensalt())
 
-    # TODO: Save user to DB
     create_user(session, payload.email, hashed_password)
     return {"status": "Success", "message": 'You have successfully signed up! Head to the login page to continue setting up account.'}
 
 
 @router.post("/login", response_model=dict[str, str])
-def login(payload: User):
+def login(payload: UserRequest, session: Session = Depends(get_session)):
 
-    # TODO: Check DB if we have this user
     valid_user = True
-    if payload.email not in ['reinis@abc.com', 'test@xyz@com']:
+
+    user_from_db = get_user_by_email(session, payload.email)
+
+    if not user_from_db:
         valid_user = False
 
-    # TODO: Check if password hash is correct
-    if not payload.password:
-        valid_user = False
-    # is_valid_password = bcrypt.checkpw(payload.password.encode("utf-8"), stored_hash_from_db)
+    # Create variables for hashed_password and user_status 
+    # as pydance won't suppport user_from_db (that can be User or None) values
+    hashed_password: bytes = bytes(user_from_db.password) if user_from_db else b"Dummy password"
+    user_status = user_from_db.status if user_from_db else "Junk"
     
-    # TODO: Generate JWT token
+    is_valid_password: bool = bcrypt.checkpw(payload.password.encode("utf-8"), hashed_password)
+    if not is_valid_password:
+        valid_user = False
+
     token = create_token(payload.email)
 
-    # TODO: If any of the checks fail, return error
+
     if not valid_user:
         return {"status": "Error", "message": "Incorrect email or password"}
     
-    # TODO: Return JWT token and let user through
-    return {"status": "Success", "message": "Login successful!", "token": token, "user_status": "New"}
+    
+    return {"status": "Success", "message": "Login successful!", "token": token, "user_status": user_status}
