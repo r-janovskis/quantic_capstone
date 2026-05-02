@@ -17,10 +17,10 @@ class User(UserBase, table=True):
     email: str = Field(unique=True)
     password: bytes
     created: datetime = Field(default_factory=utc_now)
-    status: str = Field(default="New")
+    status: int = Field(foreign_key="statuses.id", default=1) # 1 = New
     last_login: Optional[datetime] = Field(default=None)
 
 
 class UserPublic(UserBase):
     id: int
-    status: str
+    status: int

@@ -16,6 +16,7 @@ class APIResponse(SQLModel):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     database.create_db_and_tables()
+    database.seed_statuses()
     yield
 
 app = FastAPI(lifespan=lifespan)

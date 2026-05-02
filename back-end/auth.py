@@ -41,7 +41,7 @@ def login(payload: UserRequest, session: Session = Depends(get_session)):
     # Create variables for hashed_password and user_status 
     # as pydance won't suppport user_from_db (that can be User or None) values
     hashed_password: bytes = bytes(user_from_db.password) if user_from_db else b"Dummy password"
-    user_status = user_from_db.status if user_from_db else "Junk"
+    user_status = user_from_db.status if user_from_db else -1
     
     is_valid_password: bool = bcrypt.checkpw(payload.password.encode("utf-8"), hashed_password)
     if not is_valid_password:
