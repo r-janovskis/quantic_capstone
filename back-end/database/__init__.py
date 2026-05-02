@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 import os
-from sqlmodel import Session, create_engine, SQLModel
+from sqlmodel import Session, create_engine, SQLModel, select
 from database.models.status import Status
 from database.models.user import User # noqa: F401
 
@@ -29,6 +29,9 @@ def create_db_and_tables():
 def seed_statuses():
 
     with Session(engine) as session:
+        # Check if populated table already exists
+        if session.exec(select(Status)).first():
+            return
         session.add_all([
             Status(name="New"),
             Status(name="Active"),

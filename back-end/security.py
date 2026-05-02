@@ -9,13 +9,13 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = os.environ["ALGORITHM"]
 
 
-def create_token(user_email: str, expires_delta: timedelta | None = None) -> str:
+def create_token(user_id: int, expires_delta: timedelta | None = None) -> str:
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
         expire = datetime.now(timezone.utc) + timedelta(hours=1)
 
-    payload = {"sub": str(user_email), "exp": expire}
+    payload = {"sub": str(user_id), "exp": expire}
     
     token = jwt.encode(payload, SECRET_KEY, ALGORITHM)
     return token
