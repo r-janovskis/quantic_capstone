@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -13,6 +14,8 @@ function Login() {
   const [showMessage, setShowMessage] = useState(false);
   const [messageType, setMessageType] = useState("");
   const [APIMessage, setAPIMessage] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = (
     event: React.SubmitEvent<HTMLFormElement>
@@ -36,6 +39,12 @@ function Login() {
             setAPIMessage(
               `Message: ${response.message}\nToken: ${response.token}\nUser status: ${response.user_status}`
             );
+            // Set the token in local storage so we get access to protected routes later
+            localStorage.setItem("token", response.token);
+            // Based on user type (volunteer or organisation) we direct them to the correct route
+            if (response.user_status === 1) {
+              navigate("/profile/create");
+            }
           } else if (response.status === "Error") {
             setMessageType("danger");
             setAPIMessage(`Message; ${response.message}`);
@@ -44,7 +53,7 @@ function Login() {
           }
         })
         .catch(() => {
-          setMessageType("Danger");
+          setMessageType("danger");
           setAPIMessage("Something went wrong! Please try again later.");
         });
       setShowMessage(true);

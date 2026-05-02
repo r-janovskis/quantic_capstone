@@ -4,7 +4,11 @@ interface AuthResponse {
   status: string;
   message: string;
   token?: string;
-  user_status?: string;
+  user_status?: number;
+}
+
+interface TokenVerificationResponse {
+  status: string;
 }
 
 const BASE_URL = "http://localhost:8000/auth";
@@ -33,6 +37,22 @@ const login = async (
   return response.data;
 };
 
-const authServices = { signUp, login };
+const verifyToken = async (
+  token: string
+): Promise<TokenVerificationResponse> => {
+  const endpoint: string = `${BASE_URL}/verify`;
+  const response: AxiosResponse<TokenVerificationResponse> = await axios.get(
+    endpoint,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+const authServices = { signUp, login, verifyToken };
 
 export default authServices;
