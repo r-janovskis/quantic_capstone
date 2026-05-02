@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel, Field
 from datetime import datetime, timezone
 from typing import Optional, ClassVar
+from pydantic import EmailStr
 
 # As pylance was struggling to comperhend it inside the Field(...)
 def utc_now() -> datetime:
@@ -8,7 +9,7 @@ def utc_now() -> datetime:
 
 # Base class which capture all the shared fields
 class UserBase(SQLModel):
-    email: str 
+    email: EmailStr 
 
 # User model that will create table in database
 class User(UserBase, table=True):

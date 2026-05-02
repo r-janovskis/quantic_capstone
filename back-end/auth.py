@@ -1,14 +1,30 @@
 from fastapi import APIRouter, Depends, Header
 from sqlmodel import Session
-import bcrypt
 from security import create_token, verify_token
 from database import get_session
 from database.models.user import User, UserBase
 from database.repositories.user_repo import get_user_by_email, create_user
+from pydantic import field_validator
+import bcrypt
+import re
 
 # Class to represent a user that will be received from the client
 class UserRequest(UserBase):
     password: str
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        if len(v) < 10:
+            raise ValueError("Password must be at least 10 characters long")
+        if not re.search(r"[A-Z]", v):
+            raise ValueError("Password must containe an uppercase letter")
+        if not re.search(r"\d", v):
+            raise ValueError("Password must contain a number")
+        if not re.search(r"[^a-zA-Z0-9]", v):
+            raise ValueError("Password must contain a special character")
+        
+        return v
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
