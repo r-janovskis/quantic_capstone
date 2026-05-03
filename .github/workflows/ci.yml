@@ -51,4 +51,5 @@ jobs:
         env:
           SECRET_KEY: test_secret_key
           ALGORITHM: HS256
+          DATABASE_URL: postgresql+psycopg2://test_user:test_password@localhost:5432/test_db
         run: pytest tests/
