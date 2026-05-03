@@ -2,7 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import SQLModel, create_engine, Session
 from database.models.status import Status
-from database.models.user import User 
+from database.models.user import User # noqa: F401
 
 TEST_DB_URL = "postgresql+psycopg2://test_user:test_password@localhost:5432/test_db"
 

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Header
 from sqlmodel import Session
 from security import create_token, verify_token
 from database import get_session
-from database.models.user import User, UserBase
+from database.models.user import UserBase
 from database.repositories.user_repo import get_user_by_email, create_user
 from pydantic import field_validator
 import bcrypt
