@@ -1,0 +1,27 @@
+header {
+  background-color: coral;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: black;
+  text-decoration: none;
+  text-decoration-line: none;
+
+  margin: 0;
+}
+
+.main-navigation-bar {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.divider-line,
+.signup-link {
+  margin: auto;
+}
