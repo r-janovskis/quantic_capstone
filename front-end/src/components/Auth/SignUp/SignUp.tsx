@@ -25,13 +25,19 @@ function SignUp() {
   const navigate = useNavigate();
 
   const handlePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const password: string = event.currentTarget.value;
-    setPasswordChecks({
+    const password = event.currentTarget.value;
+    const checks = {
       length: password.length >= 10,
       uppercase: /[A-Z]/.test(password),
       number: /[0-9]/.test(password),
       specialChar: /[^a-zA-Z0-9]/.test(password),
-    });
+    };
+    setPasswordChecks(checks);
+
+    const allPass = Object.values(checks).every(Boolean);
+    event.currentTarget.setCustomValidity(
+      allPass ? "" : "Password does not meet requirements"
+    );
   };
 
   const handleConfirmPassword = (
