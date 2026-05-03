@@ -48,12 +48,12 @@ def signup(payload: UserRequest, session: Session = Depends(get_session)):
 def login(payload: UserRequest, session: Session = Depends(get_session)):
 
     valid_user = True
-
+    DUMMY_HASH = bcrypt.hashpw(b"dummy", bcrypt.gensalt())
     user_from_db = get_user_by_email(session, payload.email)
 
     if not user_from_db:
         valid_user = False
-        hashed_password: bytes = b"Dummy password"
+        hashed_password: bytes = DUMMY_HASH
         user_status = -1
         user_id = -1
     else:
