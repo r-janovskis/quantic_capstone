@@ -17,9 +17,7 @@ function Login() {
 
   const navigate = useNavigate();
 
-  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = (
-    event: React.SubmitEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const form: HTMLFormElement = event.currentTarget;

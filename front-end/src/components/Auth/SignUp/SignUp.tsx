@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
@@ -22,9 +22,9 @@ function SignUp() {
   const [messageType, setMessageType] = useState("");
   const [APIMessage, setAPIMessage] = useState("");
 
-  const handlePassword: React.ChangeEventHandler<HTMLInputElement> = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const navigate = useNavigate();
+
+  const handlePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     const password: string = event.currentTarget.value;
     setPasswordChecks({
       length: password.length >= 10,
@@ -34,7 +34,7 @@ function SignUp() {
     });
   };
 
-  const handleConfirmPassword: React.ChangeEventHandler<HTMLInputElement> = (
+  const handleConfirmPassword = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const form: HTMLFormElement = event.currentTarget.form!;
@@ -49,9 +49,7 @@ function SignUp() {
     }
   };
 
-  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = (
-    event: React.SubmitEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     const form: HTMLFormElement = event.currentTarget;
 
     // We always want to stay on the signup page
@@ -96,7 +94,8 @@ function SignUp() {
             setShowMessage(true);
             setMessageType("success");
             setAPIMessage(response.message);
-            // alert(`Status: ${response.status}\nMessage: ${response.message}`);
+            setTimeout(() => navigate("/auth/login"), 2000);
+
             // Scenario where email address is already in use...
           } else {
             setShowMessage(true);
