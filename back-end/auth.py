@@ -3,7 +3,7 @@ from sqlmodel import Session
 from security import create_token, verify_token
 from database import get_session
 from database.models.user import UserBase
-from database.repositories.user_repo import get_user_by_email, create_user
+from database.repositories.user_repo import get_user_by_email, create_user, update_last_login
 from pydantic import field_validator
 import bcrypt
 import re
@@ -65,6 +65,7 @@ def login(payload: UserRequest, session: Session = Depends(get_session)):
     if not is_valid_password:
         valid_user = False
 
+    # Token generated here as we would like to make time attacks harder to execute
     token = create_token(user_id)
 
     if not valid_user:
@@ -73,6 +74,7 @@ def login(payload: UserRequest, session: Session = Depends(get_session)):
             "message": "Incorrect email or password"
         }
     
+    update_last_login(session, user_id)
     return {
         "status": "Success", 
         "message": "Login successful!", 
