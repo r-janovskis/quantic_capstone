@@ -56,7 +56,7 @@
 
 .password-checklist {
   list-style: none;
-  font-size: 0.8rem;
+  margin: 0;
 }
 
 .password-checklist li {

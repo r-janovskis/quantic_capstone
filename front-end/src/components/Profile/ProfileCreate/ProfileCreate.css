@@ -1,0 +1,38 @@
+main {
+  display: block;
+  min-height: 70vh;
+}
+main h1 {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.user-type-selection {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 3rem;
+}
+
+.user-type-options {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.user-type-options input {
+  border-color: black;
+}
+
+.form-text {
+  margin: auto 0;
+}
+
+.user-type-selection ul {
+  list-style: none;
+  padding: 0;
+}
+
+.bold {
+  font-weight: 700;
+}
