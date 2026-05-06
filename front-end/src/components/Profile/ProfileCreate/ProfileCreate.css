@@ -7,11 +7,19 @@ main h1 {
   margin-bottom: 3rem;
 }
 
+form {
+  width: 70%;
+  margin: 0 auto;
+}
+
 .user-type-selection {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: left;
   gap: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid black;
+  margin-bottom: 2rem;
 }
 
 .user-type-options {
@@ -24,10 +32,6 @@ main h1 {
   border-color: black;
 }
 
-.form-text {
-  margin: auto 0;
-}
-
 .user-type-selection ul {
   list-style: none;
   padding: 0;
@@ -35,4 +39,28 @@ main h1 {
 
 .bold {
   font-weight: 700;
+}
+
+.personal-names,
+.personal-data,
+.volunteer-motivation {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.personal-data {
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid black;
+}
+
+.entry-volunteer {
+  margin: 1rem 0;
+  width: 45%;
+}
+
+.bio-volunteer {
+  margin: 1rem 0;
+  width: 100%;
 }
