@@ -5,18 +5,14 @@ from contextlib import asynccontextmanager
 import database
 
 import auth
-
-class APIResponse(SQLModel):
-    status: str
-    message: str
-    status_code: int
-
+import lookup
 
 # Initialise database when app is started
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     database.create_db_and_tables()
     database.seed_statuses()
+    database.seed_skills()
     yield
 
 app = FastAPI(lifespan=lifespan)
@@ -30,13 +26,14 @@ app.add_middleware(
 )
 
 
-@app.get("/", response_model=APIResponse, status_code=200)
-def home() -> APIResponse:
+@app.get("/health", response_model=dict[str, str], status_code=200, tags=["health"])
+def health():
     
-    return APIResponse(status_code=200, message="My dummy API endpoint", status="success")
+    return {"status": "healthy"}
 
 # Add auth routes to the app
 app.include_router(auth.router)
+app.include_router(lookup.router)
 
 # Command to run the app
 # uvicorn main:app --reload
