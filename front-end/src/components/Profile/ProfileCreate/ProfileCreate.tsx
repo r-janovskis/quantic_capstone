@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Select from "react-select";
 import lookupServices from "../../../services/lookupAPI";
@@ -57,7 +55,7 @@ function ProfileCreate() {
           />
         </Form.Group>
         <Form.Text>
-          Which one to pick?
+          Which one is you?
           <ul>
             <li>
               <span className="bold">Volunteer:</span> You want to volunteer
@@ -153,9 +151,7 @@ function ProfileCreate() {
                 />
               </Form.Group>
               <Form.Group className="entry-volunteer">
-                <Form.Label HTMLFor="post-code">
-                  Eircode (Postal code)
-                </Form.Label>
+                <Form.Label HTMLFor="post-code">Postal code</Form.Label>
                 <Form.Control
                   id="post-code"
                   name="post-code"
