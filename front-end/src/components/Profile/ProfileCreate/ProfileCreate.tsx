@@ -11,6 +11,16 @@ import "./ProfileCreate.css";
 function ProfileCreate() {
   const [profileType, setProfileType] = useState("");
   const [skills, setSkills] = useState([]);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.currentTarget.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setAvatarPreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
 
   useEffect(() => {
     lookupServices.getSkills().then((skills) => {
@@ -29,44 +39,83 @@ function ProfileCreate() {
   return (
     <main>
       <h1>Registration</h1>
-      <Form>
-        <fieldset className="user-type-selection">
-          <Form.Group className="user-type-options">
-            <Form.Check
-              type="radio"
-              name="profile-type"
-              label="Volunteer"
-              value="volunteer"
-              onChange={handleProfileTypeChange}
-            />
-            <Form.Check
-              type="radio"
-              name="profile-type"
-              label="Organiser"
-              value="organiser"
-              onChange={handleProfileTypeChange}
-            />
-          </Form.Group>
-          <Form.Text>
-            Which one to pick?
-            <ul>
-              <li>
-                <span className="bold">Volunteer:</span> You want to volunteer
-                your time for a good cause
-              </li>
-              <li>
-                <span className="bold">Organiser:</span> You want to plan and
-                organise events
-              </li>
-            </ul>
-          </Form.Text>
-        </fieldset>
-        {profileType === "volunteer" && (
+      <fieldset className="user-type-selection">
+        <Form.Group className="user-type-options">
+          <Form.Check
+            type="radio"
+            name="profile-type"
+            label="Volunteer"
+            value="volunteer"
+            onChange={handleProfileTypeChange}
+          />
+          <Form.Check
+            type="radio"
+            name="profile-type"
+            label="Organiser"
+            value="organiser"
+            onChange={handleProfileTypeChange}
+          />
+        </Form.Group>
+        <Form.Text>
+          Which one to pick?
+          <ul>
+            <li>
+              <span className="bold">Volunteer:</span> You want to volunteer
+              your time for a good cause
+            </li>
+            <li>
+              <span className="bold">Organiser:</span> You want to plan and
+              organise events
+            </li>
+          </ul>
+        </Form.Text>
+      </fieldset>
+      {profileType === "volunteer" && (
+        <Form className="registration-form">
+          <fieldset className="display-info-section">
+            <h3>Display Information</h3>
+            <div className="display-info-layout">
+              <div className="avatar-section">
+                <div className="avatar-preview">
+                  {avatarPreview ? (
+                    <img
+                      src={avatarPreview ?? undefined}
+                      alt="Avatar preview"
+                    />
+                  ) : (
+                    <span className="avatar-placeholder">No image</span>
+                  )}
+                </div>
+                <Form.Group>
+                  <Form.Label htmlFor="avatar">Profile Picture</Form.Label>
+                  <Form.Control
+                    id="avatar"
+                    name="avatar"
+                    type="file"
+                    accept="image/jpeg, image/png image/webp"
+                    onChange={handleAvatarChange}
+                  />
+                  <Form.Text>JPEG, PNG, or WebP - max 2MB</Form.Text>
+                </Form.Group>
+              </div>
+              <div className="display-name-section">
+                <Form.Group>
+                  <Form.Label htmlFor="display_name">Display Name</Form.Label>
+                  <Form.Control
+                    id="display_name"
+                    name="display_name"
+                    type="text"
+                    required
+                  />
+                </Form.Group>
+              </div>
+            </div>
+          </fieldset>
           <fieldset className="profile-form">
             <h3>Personal Information</h3>
-            <div className="personal-names">
+            <div className="personal-data">
               <Form.Group className="entry-volunteer">
-                <Form.Label HTMLFor="first_name">First name</Form.Label>
+                <Form.Label htmlFor="first_name">First name</Form.Label>
                 <Form.Control
                   id="first_name"
                   name="first_name"
@@ -83,18 +132,7 @@ function ProfileCreate() {
                   required
                 />
               </Form.Group>
-              <Form.Group className="entry-volunteer">
-                <Form.Label HTMLFor="last_name">
-                  Display Name (optional)
-                </Form.Label>
-                <Form.Control
-                  id="display_name"
-                  name="display_name"
-                  type="text"
-                />
-              </Form.Group>
-            </div>
-            <div className="personal-data">
+
               <Form.Group className="entry-volunteer">
                 <Form.Label HTMLFor="date_of_birth">Date of Birth</Form.Label>
                 <Form.Control
@@ -188,14 +226,17 @@ function ProfileCreate() {
                 placeholder="Describe yourslef..."
               />
             </Form.Group>
+            <Button type="submit">Crete Profile</Button>
           </fieldset>
-        )}
-        {profileType === "organiser" && (
+        </Form>
+      )}
+      {profileType === "organiser" && (
+        <Form>
           <fieldset className="organiser-form">
             <h2>Organiser form</h2>
           </fieldset>
-        )}
-      </Form>
+        </Form>
+      )}
     </main>
   );
 }
