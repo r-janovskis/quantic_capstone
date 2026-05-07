@@ -13,6 +13,7 @@ async def lifespan(app: FastAPI):
     database.create_db_and_tables()
     database.seed_statuses()
     database.seed_skills()
+    database.seed_languages()
     yield
 
 app = FastAPI(lifespan=lifespan)

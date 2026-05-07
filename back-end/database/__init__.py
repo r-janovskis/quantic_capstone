@@ -4,6 +4,7 @@ from sqlmodel import Session, create_engine, SQLModel, select
 from database.models.status import Status
 from database.models.user import User # noqa: F401
 from database.models.skill import Skill
+from database.models.language import Language
 
 # Load environment variables from .env file
 load_dotenv()
@@ -73,5 +74,26 @@ def seed_skills():
             Skill(name="Music"),
             Skill(name="Arts and crafts"),
             Skill(name="Sports coaching"), 
+        ])
+        session.commit()
+
+
+def seed_languages():
+
+    with Session(engine) as session:
+        # Check if populated table already exists
+        if session.exec(select(Language)).first():
+            return
+        session.add_all([
+            Language(language="English"),
+            Language(language="French"),
+            Language(language="Irish"),
+            Language(language="Spanish"),
+            Language(language="Portuguese"),
+            Language(language="German"),
+            Language(language="Polish"),
+            Language(language="Lithuanian"),
+            Language(language="Latvian"),
+            Language(language="Italian"),
         ])
         session.commit()
