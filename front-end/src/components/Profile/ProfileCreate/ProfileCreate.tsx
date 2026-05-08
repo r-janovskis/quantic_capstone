@@ -7,16 +7,19 @@ import lookupServices from "../../../services/lookupAPI";
 
 import "./ProfileCreate.css";
 
-function ProfileCreate() {
-  type Option = {
-    value: number;
-    label: string;
-  };
+type Option = {
+  value: number;
+  label: string;
+};
 
+function ProfileCreate() {
   const [profileType, setProfileType] = useState("");
 
-  const [skills, setSkills] = useState([]);
-  const [languages, setLanguages] = useState([]);
+  // Values we load from API calls and display in dropdowns
+  const [skills, setSkills] = useState<Option[]>([]);
+  const [languages, setLanguages] = useState<Option[]>([]);
+  const [countries, setCountries] = useState<Option[]>([]);
+  const [shirtSizes, setShirtSizes] = useState<Option[]>([]);
 
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [selectedSInterests, setSelectedInterestes] = useState([]);
@@ -53,8 +56,18 @@ function ProfileCreate() {
       setLanguages(
         languages.map((language) => ({
           value: language.id,
-          label: language.language,
+          label: language.name,
         }))
+      );
+    });
+    lookupServices.getCountries().then((countries) => {
+      setCountries(
+        countries.map((country) => ({ value: country.id, label: country.name }))
+      );
+    });
+    lookupServices.getShirtSizes().then((sizes) => {
+      setShirtSizes(
+        sizes.map((size) => ({ value: size.id, label: size.name }))
       );
     });
   }, []);
@@ -185,23 +198,21 @@ function ProfileCreate() {
                 />
               </Form.Group>
               <Form.Group className="entry-volunteer">
-                <Form.Label htmlFor="post-code">Postal code</Form.Label>
-                <Form.Control
-                  id="post-code"
-                  name="post-code"
-                  type="text"
-                  required
-                />
+                <Form.Label htmlFor="area">City/Town/Region</Form.Label>
+                <Form.Control id="area" name="area" type="text" required />
+                <Form.Text>City, town or region you are from</Form.Text>
               </Form.Group>
               <Form.Group className="entry-volunteer">
-                <Form.Label htmlFor="location">Location</Form.Label>
-                <Form.Select id="location" name="location" required>
+                <Form.Label htmlFor="country">Country</Form.Label>
+                <Form.Select id="country" name="country" required>
                   <option value="">Select a country</option>
-                  <option value="Ireland">Ireland</option>
-                  <option value="United Kingdom">United Kingdom</option>
-                  <option value="Spain">Spain</option>
-                  <option value="Portugal">Portugal</option>
-                  <option value="France">France</option>
+                  {countries.map((country) => {
+                    return (
+                      <option key={country.value} value={country.value}>
+                        {country.label}
+                      </option>
+                    );
+                  })}
                 </Form.Select>
               </Form.Group>
             </div>
@@ -252,20 +263,35 @@ function ProfileCreate() {
                   }
                 />
               </Form.Group>
+              <Form.Group className="entry-volunteer">
+                <Form.Label htmlFor="t_shirt">
+                  What t-shirt size do you prefer?
+                </Form.Label>
+                <Form.Select id="t_shirt" name="t_shirt" required>
+                  <option value="">Select T-shirt size</option>
+                  {shirtSizes.map((size) => {
+                    return (
+                      <option key={size.value} value={size.value}>
+                        {size.label}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              </Form.Group>
             </div>
             <Form.Group className="bio-volunteer">
               <Form.Label htmlFor="bio">
-                Could you tell us a bit more about yourslef?
+                Could you tell us a bit more about yourself?
               </Form.Label>
               <Form.Control
                 id="bio"
                 name="bio"
                 as="textarea"
                 rows={5}
-                placeholder="Describe yourslef..."
+                placeholder="Describe yourself..."
               />
             </Form.Group>
-            <Button type="submit">Crete Profile</Button>
+            <Button type="submit">Create Profile</Button>
           </fieldset>
         </Form>
       )}
