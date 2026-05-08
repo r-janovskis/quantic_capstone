@@ -2,15 +2,14 @@ from sqlmodel import SQLModel, Field
 from typing import Optional, ClassVar
 
 
-class LanguageBase(SQLModel):
+class ShirtSizeBase(SQLModel):
     name: str
 
-
-class Language(LanguageBase, table=True):
-    __tablename__: ClassVar[str] = "languages" #type: ignore[assignment]
+class ShirtSize(ShirtSizeBase, table=True):
+    __tablename__: ClassVar[str] = "shirt_sizes" #type: ignore[assignment]
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(unique=True)
 
 
-class LanguagePublic(LanguageBase):
+class ShirtSizePublic(ShirtSizeBase):
     id: int

@@ -5,11 +5,11 @@ from database.models.status import Status
 from database.models.user import User # noqa: F401
 from database.models.skill import Skill
 from database.models.language import Language
+from database.models.country import Country
+from database.models.shirt_size import ShirtSize
 
 # Load environment variables from .env file
 load_dotenv()
-
-
 
 # We build connection string and tell to use psycopg2 driver to connect with DB
 connection_string = os.environ["DATABASE_URL"]
@@ -85,15 +85,48 @@ def seed_languages():
         if session.exec(select(Language)).first():
             return
         session.add_all([
-            Language(language="English"),
-            Language(language="French"),
-            Language(language="Irish"),
-            Language(language="Spanish"),
-            Language(language="Portuguese"),
-            Language(language="German"),
-            Language(language="Polish"),
-            Language(language="Lithuanian"),
-            Language(language="Latvian"),
-            Language(language="Italian"),
+            Language(name="English"),
+            Language(name="French"),
+            Language(name="Irish"),
+            Language(name="Spanish"),
+            Language(name="Portuguese"),
+            Language(name="German"),
+            Language(name="Polish"),
+            Language(name="Lithuanian"),
+            Language(name="Latvian"),
+            Language(name="Italian"),
+        ])
+        session.commit()
+
+
+def seed_countries():
+
+    with Session(engine) as session:
+        # Check if populated table already exists
+        if session.exec(select(Country)).first():
+            return
+        session.add_all([
+            Country(name="France"),
+            Country(name="Ireland"),
+            Country(name="Portugal"),
+            Country(name="Spain"),
+            Country(name="United Kingdom"),
+        ])
+        session.commit()
+
+
+def seed_shirt_sizes():
+    
+    with Session(engine) as session:
+        if session.exec(select(ShirtSize)).first():
+            return
+        session.add_all([
+            ShirtSize(name="2XS"),
+            ShirtSize(name="XS"),
+            ShirtSize(name="S"),
+            ShirtSize(name="M"),
+            ShirtSize(name="L"),
+            ShirtSize(name="XL"),
+            ShirtSize(name="2XL"),
         ])
         session.commit()
