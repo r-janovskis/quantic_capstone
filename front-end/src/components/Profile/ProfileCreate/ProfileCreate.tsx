@@ -2,13 +2,26 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Select from "react-select";
+import type { MultiValue } from "react-select";
 import lookupServices from "../../../services/lookupAPI";
 
 import "./ProfileCreate.css";
 
 function ProfileCreate() {
+  type Option = {
+    value: number;
+    label: string;
+  };
+
   const [profileType, setProfileType] = useState("");
+
   const [skills, setSkills] = useState([]);
+  const [languages, setLanguages] = useState([]);
+
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [selectedSInterests, setSelectedInterestes] = useState([]);
+  const [selectedLanguages, setSelectedLanguages] = useState([]);
+
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,10 +33,28 @@ function ProfileCreate() {
     }
   };
 
+  const handleVolunteerFormSubmit = (
+    event: React.SubmitEvent<HTMLFormElement>
+  ) => {
+    // We stop default behaviour
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    console.log(selectedSkills.map((skill) => skill.value));
+  };
+
   useEffect(() => {
     lookupServices.getSkills().then((skills) => {
       setSkills(
         skills.map((skill) => ({ value: skill.id, label: skill.name }))
+      );
+    });
+    lookupServices.getLanguages().then((languages) => {
+      setLanguages(
+        languages.map((language) => ({
+          value: language.id,
+          label: language.language,
+        }))
       );
     });
   }, []);
@@ -69,7 +100,10 @@ function ProfileCreate() {
         </Form.Text>
       </fieldset>
       {profileType === "volunteer" && (
-        <Form className="registration-form">
+        <Form
+          className="registration-form"
+          onSubmit={handleVolunteerFormSubmit}
+        >
           <fieldset className="display-info-section">
             <h3>Display Information</h3>
             <div className="display-info-layout">
@@ -122,7 +156,7 @@ function ProfileCreate() {
                 />
               </Form.Group>
               <Form.Group className="entry-volunteer">
-                <Form.Label HTMLFor="last_name">Last Name</Form.Label>
+                <Form.Label htmlFor="last_name">Last Name</Form.Label>
                 <Form.Control
                   id="last_name"
                   name="last_name"
@@ -132,7 +166,7 @@ function ProfileCreate() {
               </Form.Group>
 
               <Form.Group className="entry-volunteer">
-                <Form.Label HTMLFor="date_of_birth">Date of Birth</Form.Label>
+                <Form.Label htmlFor="date_of_birth">Date of Birth</Form.Label>
                 <Form.Control
                   id="date_of_birth"
                   name="date_of_birth"
@@ -141,17 +175,17 @@ function ProfileCreate() {
                 />
               </Form.Group>
               <Form.Group className="entry-volunteer">
-                <Form.Label HTMLFor="phone">Phone Number</Form.Label>
+                <Form.Label htmlFor="phone">Phone Number</Form.Label>
                 <Form.Control
                   id="phone"
                   name="phone"
                   type="text"
-                  pattern="[0-9+\+\s()]+"
+                  pattern="[0-9\+\s\(\)]+"
                   required
                 />
               </Form.Group>
               <Form.Group className="entry-volunteer">
-                <Form.Label HTMLFor="post-code">Postal code</Form.Label>
+                <Form.Label htmlFor="post-code">Postal code</Form.Label>
                 <Form.Control
                   id="post-code"
                   name="post-code"
@@ -160,7 +194,7 @@ function ProfileCreate() {
                 />
               </Form.Group>
               <Form.Group className="entry-volunteer">
-                <Form.Label HTMLFor="location">Location</Form.Label>
+                <Form.Label htmlFor="location">Location</Form.Label>
                 <Form.Select id="location" name="location" required>
                   <option value="">Select a country</option>
                   <option value="Ireland">Ireland</option>
@@ -174,7 +208,7 @@ function ProfileCreate() {
             <h3>Getting to know you</h3>
             <div className="volunteer-motivation">
               <Form.Group className="entry-volunteer">
-                <Form.Label HTMLFor="skills">
+                <Form.Label htmlFor="skills">
                   What skills or previous experiences do you have?
                 </Form.Label>
                 <Select
@@ -183,10 +217,13 @@ function ProfileCreate() {
                   isMulti
                   closeMenuOnSelect={false}
                   options={skills}
+                  onChange={(selected: MultiValue<Option>) =>
+                    setSelectedSkills([...selected])
+                  }
                 />
               </Form.Group>
               <Form.Group className="entry-volunteer">
-                <Form.Label HTMLFor="interests">
+                <Form.Label htmlFor="interests">
                   What do you enjoy? How would you like to help?
                 </Form.Label>
                 <Select
@@ -195,23 +232,29 @@ function ProfileCreate() {
                   isMulti
                   closeMenuOnSelect={false}
                   options={skills}
+                  onChange={(selected: MultiValue<Option>) =>
+                    setSelectedInterestes([...selected])
+                  }
                 />
               </Form.Group>
               <Form.Group className="entry-volunteer">
-                <Form.Label HTMLFor="languages">
+                <Form.Label htmlFor="languages">
                   What languages do you speak?
                 </Form.Label>
                 <Select
-                  id="interests"
-                  name="interests"
+                  id="languages"
+                  name="languages"
                   isMulti
                   closeMenuOnSelect={false}
-                  options={skills}
+                  options={languages}
+                  onChange={(selected: MultiValue<Option>) =>
+                    setSelectedLanguages([...selected])
+                  }
                 />
               </Form.Group>
             </div>
             <Form.Group className="bio-volunteer">
-              <Form.Label HTMLFor="bio">
+              <Form.Label htmlFor="bio">
                 Could you tell us a bit more about yourslef?
               </Form.Label>
               <Form.Control
