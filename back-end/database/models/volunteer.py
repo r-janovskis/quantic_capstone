@@ -11,7 +11,7 @@ class VolunteerBase(SQLModel):
     phone: str
     date_of_birth: date
     area: str
-    bio: Optional[str] = None
+    bio: Optional[str]
 
 class Volunteer(VolunteerBase, table=True):
     __tablename__: ClassVar[str] = "volunteers" #type: ignore[assignment]

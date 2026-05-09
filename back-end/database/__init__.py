@@ -7,6 +7,10 @@ from database.models.skill import Skill
 from database.models.language import Language
 from database.models.country import Country
 from database.models.shirt_size import ShirtSize
+from database.models.volunteer import Volunteer
+from database.models.volunteer_skill import VolunteerSkill
+from database.models.volunteer_interest import VolunteerInterest
+from database.models.volunteer_language import VolunteerLanguage
 
 # Load environment variables from .env file
 load_dotenv()
