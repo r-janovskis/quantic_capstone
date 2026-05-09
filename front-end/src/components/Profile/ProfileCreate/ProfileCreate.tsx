@@ -30,6 +30,7 @@ function ProfileCreate() {
   const [languages, setLanguages] = useState<Option[]>([]);
   const [countries, setCountries] = useState<Option[]>([]);
   const [shirtSizes, setShirtSizes] = useState<Option[]>([]);
+  const [interests, setInterests] = useState<Option[]>([]);
 
   const [selectedSkills, setSelectedSkills] = useState<Option[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<Option[]>([]);
@@ -121,6 +122,14 @@ function ProfileCreate() {
     lookupServices.getShirtSizes().then((sizes) => {
       setShirtSizes(
         sizes.map((size) => ({ value: size.id, label: size.name }))
+      );
+    });
+    lookupServices.getInterests().then((interests) => {
+      setInterests(
+        interests.map((interest) => ({
+          value: interest.id,
+          label: interest.name,
+        }))
       );
     });
   }, []);
@@ -310,14 +319,14 @@ function ProfileCreate() {
               </Form.Group>
               <Form.Group className="entry-volunteer">
                 <Form.Label htmlFor="interests">
-                  What do you enjoy? How would you like to help?
+                  Where would you be interested to volunteer?
                 </Form.Label>
                 <Select
                   id="interests"
                   name="interests"
                   isMulti
                   closeMenuOnSelect={false}
-                  options={skills}
+                  options={interests}
                   onChange={(selected: MultiValue<Option>) => {
                     setSelectedInterests([...selected]);
                     if (selected.length > 0)

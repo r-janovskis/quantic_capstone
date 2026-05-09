@@ -6,11 +6,13 @@ from database.models.skill import SkillPublic
 from database.models.language import LanguagePublic
 from database.models.country import CountryPublic
 from database.models.shirt_size import ShirtSizePublic
+from database.models.interest import InterestPublic
 
 from database.repositories.skill_repo import get_all_skills
 from database.repositories.language_repo import get_all_languages
 from database.repositories.country_repo import get_all_countries
 from database.repositories.shirt_size_repo import get_all_shirt_sizes
+from database.repositories.interest_repo import get_all_interests
 
 
 
@@ -34,3 +36,8 @@ def get_countries(session: Session = Depends(get_session)):
 @router.get("/shirt_sizes", response_model=list[ShirtSizePublic])
 def get_shirt_sizes(session: Session = Depends(get_session)):
     return get_all_shirt_sizes(session)
+
+
+@router.get("/interests", response_model=list[InterestPublic])
+def get_interests(session: Session = Depends(get_session)):
+    return get_all_interests(session)

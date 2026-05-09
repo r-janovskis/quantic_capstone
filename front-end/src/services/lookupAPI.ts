@@ -38,6 +38,19 @@ const getShirtSizes = async (): Promise<LookupResponse[]> => {
   return response.data;
 };
 
-const lookupServices = { getSkills, getLanguages, getCountries, getShirtSizes };
+const getInterests = async (): Promise<LookupResponse[]> => {
+  const endpoint = BASE_URL + "/interests";
+  const response: AxiosResponse<LookupResponse[]> = await axios.get(endpoint);
+
+  return response.data;
+};
+
+const lookupServices = {
+  getSkills,
+  getLanguages,
+  getCountries,
+  getShirtSizes,
+  getInterests,
+};
 
 export default lookupServices;

@@ -103,7 +103,7 @@ def seed_interests():
             Interest(name="Fundraising & events"),
             Interest(name="Sports & recreation"),
         ])
-
+        session.commit()
 
 def seed_languages():
 

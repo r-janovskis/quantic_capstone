@@ -16,6 +16,7 @@ async def lifespan(app: FastAPI):
     database.seed_languages()
     database.seed_countries()
     database.seed_shirt_sizes()
+    database.seed_interests()
     yield
 
 app = FastAPI(lifespan=lifespan)
