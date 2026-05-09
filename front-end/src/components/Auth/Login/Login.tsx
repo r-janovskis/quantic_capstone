@@ -27,6 +27,7 @@ function Login() {
     // Clear custom validity errro from email field
     // In case we had set it previously (like email is already in use)
     email.setCustomValidity("");
+    password.setCustomValidity("");
 
     if (form.checkValidity()) {
       authServices
@@ -45,9 +46,10 @@ function Login() {
             }
           } else if (response.status === "Error") {
             setMessageType("danger");
-            setAPIMessage(`Message; ${response.message}`);
+            setAPIMessage(`Message: ${response.message}`);
 
-            email.setCustomValidity("response.message");
+            email.setCustomValidity(response.message);
+            password.setCustomValidity(response.message);
           }
         })
         .catch(() => {
