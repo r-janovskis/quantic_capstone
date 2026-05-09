@@ -15,6 +15,14 @@ type Option = {
 function ProfileCreate() {
   const [profileType, setProfileType] = useState("");
 
+  // Values we use to visualize form field validity
+  const [validated, setValidated] = useState(false);
+  const [errors, setErrors] = useState({
+    skills: false,
+    interests: false,
+    languages: false,
+  });
+
   // Values we load from API calls and display in dropdowns
   const [skills, setSkills] = useState<Option[]>([]);
   const [languages, setLanguages] = useState<Option[]>([]);
@@ -22,7 +30,7 @@ function ProfileCreate() {
   const [shirtSizes, setShirtSizes] = useState<Option[]>([]);
 
   const [selectedSkills, setSelectedSkills] = useState([]);
-  const [selectedSInterests, setSelectedInterestes] = useState([]);
+  const [selectedInterests, setSelectedInterestes] = useState([]);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
@@ -42,8 +50,22 @@ function ProfileCreate() {
     // We stop default behaviour
     event.preventDefault();
 
+    // Do custom react-select (multi-select) field validation
+    const hasErrors = {
+      skills: selectedSkills.length === 0,
+      interests: selectedInterests.length === 0,
+      languages: selectedLanguages.length === 0,
+    };
+    setErrors(hasErrors);
+
     const form = event.currentTarget;
-    console.log(selectedSkills.map((skill) => skill.value));
+
+    // Do custom form validation
+    if (form.checkValidity()) {
+      alert("All checked and valid!");
+    }
+
+    setValidated(true);
   };
 
   useEffect(() => {
@@ -115,6 +137,8 @@ function ProfileCreate() {
       {profileType === "volunteer" && (
         <Form
           className="registration-form"
+          noValidate
+          validated={validated}
           onSubmit={handleVolunteerFormSubmit}
         >
           <fieldset className="display-info-section">
@@ -228,9 +252,22 @@ function ProfileCreate() {
                   isMulti
                   closeMenuOnSelect={false}
                   options={skills}
-                  onChange={(selected: MultiValue<Option>) =>
-                    setSelectedSkills([...selected])
-                  }
+                  onChange={(selected: MultiValue<Option>) => {
+                    setSelectedSkills([...selected]);
+                    if (selected.length > 0)
+                      setErrors((prev) => ({ ...prev, skills: false }));
+                  }}
+                  required
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      borderColor: errors.skills
+                        ? "#dc3545"
+                        : selectedSkills.length > 0
+                        ? "#198754"
+                        : base.borderColor,
+                    }),
+                  }}
                 />
               </Form.Group>
               <Form.Group className="entry-volunteer">
@@ -243,9 +280,22 @@ function ProfileCreate() {
                   isMulti
                   closeMenuOnSelect={false}
                   options={skills}
-                  onChange={(selected: MultiValue<Option>) =>
-                    setSelectedInterestes([...selected])
-                  }
+                  onChange={(selected: MultiValue<Option>) => {
+                    setSelectedInterestes([...selected]);
+                    if (selected.length > 0)
+                      setErrors((prev) => ({ ...prev, interests: false }));
+                  }}
+                  required
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      borderColor: errors.interests
+                        ? "#dc3545"
+                        : selectedInterests.length > 0
+                        ? "#198754"
+                        : base.borderColor,
+                    }),
+                  }}
                 />
               </Form.Group>
               <Form.Group className="entry-volunteer">
@@ -258,9 +308,22 @@ function ProfileCreate() {
                   isMulti
                   closeMenuOnSelect={false}
                   options={languages}
-                  onChange={(selected: MultiValue<Option>) =>
-                    setSelectedLanguages([...selected])
-                  }
+                  onChange={(selected: MultiValue<Option>) => {
+                    setSelectedLanguages([...selected]);
+                    if (selected.length > 0)
+                      setErrors((prev) => ({ ...prev, languages: false }));
+                  }}
+                  required
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      borderColor: errors.languages
+                        ? "#dc3545"
+                        : selectedLanguages.length > 0
+                        ? "#198754"
+                        : base.borderColor,
+                    }),
+                  }}
                 />
               </Form.Group>
               <Form.Group className="entry-volunteer">
@@ -289,6 +352,7 @@ function ProfileCreate() {
                 as="textarea"
                 rows={5}
                 placeholder="Describe yourself..."
+                required
               />
             </Form.Group>
             <Button type="submit">Create Profile</Button>
