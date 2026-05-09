@@ -8,6 +8,11 @@ from pydantic import field_validator
 import bcrypt
 import re
 
+
+# For login endpoint where we don't want to validate_password validator to run
+class LoginRequest(UserBase):
+    password: str
+
 # Class to represent a user that will be received from the client
 class UserRequest(UserBase):
     password: str
@@ -45,7 +50,7 @@ def signup(payload: UserRequest, session: Session = Depends(get_session)):
 
 
 @router.post("/login", response_model=dict[str, str | int])
-def login(payload: UserRequest, session: Session = Depends(get_session)):
+def login(payload: LoginRequest, session: Session = Depends(get_session)):
 
     valid_user = True
     DUMMY_HASH = bcrypt.hashpw(b"dummy", bcrypt.gensalt())
