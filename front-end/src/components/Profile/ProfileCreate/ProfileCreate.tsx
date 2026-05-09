@@ -22,6 +22,8 @@ function ProfileCreate() {
     interests: false,
     languages: false,
   });
+  const [avatarFeedback, setAvatarFeedback] = useState("");
+  const [ageFeedback, setAgeFeedback] = useState("");
 
   // Values we load from API calls and display in dropdowns
   const [skills, setSkills] = useState<Option[]>([]);
@@ -29,9 +31,9 @@ function ProfileCreate() {
   const [countries, setCountries] = useState<Option[]>([]);
   const [shirtSizes, setShirtSizes] = useState<Option[]>([]);
 
-  const [selectedSkills, setSelectedSkills] = useState([]);
-  const [selectedInterests, setSelectedInterestes] = useState([]);
-  const [selectedLanguages, setSelectedLanguages] = useState([]);
+  const [selectedSkills, setSelectedSkills] = useState<Option[]>([]);
+  const [selectedInterests, setSelectedInterests] = useState<Option[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<Option[]>([]);
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
@@ -41,6 +43,16 @@ function ProfileCreate() {
       const reader = new FileReader();
       reader.onload = () => setAvatarPreview(reader.result as string);
       reader.readAsDataURL(file);
+
+      if (file.size > 2 * 1024 * 1024) {
+        event.currentTarget.setCustomValidity(
+          "We only accept files smaller than 2MB"
+        );
+        setAvatarFeedback("We only accept files smaller than 2MB");
+      } else {
+        event.currentTarget.setCustomValidity("");
+        setAvatarFeedback("");
+      }
     }
   };
 
@@ -59,9 +71,28 @@ function ProfileCreate() {
     setErrors(hasErrors);
 
     const form = event.currentTarget;
+    const date_of_birth = form.elements.namedItem(
+      "date_of_birth"
+    ) as HTMLInputElement;
+
+    // Check if age is less than 18 years old
+    if (
+      Date.now() - Date.parse(date_of_birth.value) <
+      18 * 365 * 24 * 60 * 60 * 1000
+    ) {
+      date_of_birth.setCustomValidity(
+        "You must be at least 18 years old to register!"
+      );
+      setAgeFeedback("You must be at least 18 years old to register!");
+    } else {
+      date_of_birth.setCustomValidity("");
+      setAgeFeedback("");
+    }
 
     // Do custom form validation
-    if (form.checkValidity()) {
+    if (form.checkValidity() && !Object.values(hasErrors).some(Boolean)) {
+      // This is were we submit registration form
+      // and all going well lead user to the next pages...
       alert("All checked and valid!");
     }
 
@@ -161,10 +192,14 @@ function ProfileCreate() {
                     id="avatar"
                     name="avatar"
                     type="file"
-                    accept="image/jpeg, image/png image/webp"
+                    accept="image/jpeg, image/png, image/webp"
                     onChange={handleAvatarChange}
+                    isInvalid={!!avatarFeedback}
                   />
                   <Form.Text>JPEG, PNG, or WebP - max 2MB</Form.Text>
+                  <Form.Control.Feedback type="invalid">
+                    {avatarFeedback}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </div>
               <div className="display-name-section">
@@ -208,8 +243,12 @@ function ProfileCreate() {
                   id="date_of_birth"
                   name="date_of_birth"
                   type="date"
+                  isInvalid={ageFeedback !== ""}
                   required
                 />
+                <Form.Control.Feedback type="invalid">
+                  {ageFeedback}
+                </Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="entry-volunteer">
                 <Form.Label htmlFor="phone">Phone Number</Form.Label>
@@ -257,7 +296,6 @@ function ProfileCreate() {
                     if (selected.length > 0)
                       setErrors((prev) => ({ ...prev, skills: false }));
                   }}
-                  required
                   styles={{
                     control: (base) => ({
                       ...base,
@@ -281,11 +319,10 @@ function ProfileCreate() {
                   closeMenuOnSelect={false}
                   options={skills}
                   onChange={(selected: MultiValue<Option>) => {
-                    setSelectedInterestes([...selected]);
+                    setSelectedInterests([...selected]);
                     if (selected.length > 0)
                       setErrors((prev) => ({ ...prev, interests: false }));
                   }}
-                  required
                   styles={{
                     control: (base) => ({
                       ...base,
@@ -313,7 +350,6 @@ function ProfileCreate() {
                     if (selected.length > 0)
                       setErrors((prev) => ({ ...prev, languages: false }));
                   }}
-                  required
                   styles={{
                     control: (base) => ({
                       ...base,
