@@ -16,7 +16,7 @@ class User(UserBase, table=True):
     __tablename__: ClassVar[str] = "users" # type: ignore[assignment]
     id: Optional[int] = Field(default=None, primary_key=True)
     email: str = Field(unique=True)
-    password: bytes
+    password: bytes = Field()
     created: datetime = Field(default_factory=utc_now)
     status: int = Field(foreign_key="statuses.id", default=1) # 1 = New
     last_login: Optional[datetime] = Field(default=None)
