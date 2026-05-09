@@ -7,6 +7,7 @@ from database.models.skill import Skill
 from database.models.language import Language
 from database.models.country import Country
 from database.models.shirt_size import ShirtSize
+from database.models.interest import Interest
 from database.models.volunteer import Volunteer
 from database.models.volunteer_skill import VolunteerSkill
 from database.models.volunteer_interest import VolunteerInterest
@@ -66,9 +67,9 @@ def seed_skills():
             Skill(name="Bookkeeping / accounting"),
             Skill(name="Legal knowledge"),
             Skill(name="Healthcare / medical background"),
-            Skill(name="First aid certifiied"),
+            Skill(name="First aid certified"),
             Skill(name="Translation / interpretation"),
-            Skill(name="Writing /editing"),
+            Skill(name="Writing / editing"),
             Skill(name="Social media / communications"),
             Skill(name="Photography / videography"),
             Skill(name="Graphic design"),
@@ -80,6 +81,28 @@ def seed_skills():
             Skill(name="Sports coaching"), 
         ])
         session.commit()
+
+
+def seed_interests():
+
+    # Check if populated table already exists
+    with Session(engine) as session:
+        if session.exec(select(Interest)).first():
+            return
+        session.add_all([
+            Interest(name="Elderly care & companionship"),
+            Interest(name="Children & youth"),
+            Interest(name="Homelessness & housing"),
+            Interest(name="Food poverty & food banks"),
+            Interest(name="Mental health support"),
+            Interest(name="Disability support"),
+            Interest(name="Education & literacy"),
+            Interest(name="Refugee & asylum support"),
+            Interest(name="Community outreach"),
+            Interest(name="Environmental projects"),
+            Interest(name="Fundraising & events"),
+            Interest(name="Sports & recreation"),
+        ])
 
 
 def seed_languages():
