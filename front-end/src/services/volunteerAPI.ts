@@ -10,7 +10,7 @@ interface VolunteerData {
   first_name: string;
   last_name: string;
   phone: string;
-  date_of_birth: Date;
+  date_of_birth: string;
   area: string;
   country_id: number;
   shirt_size_id: number;
@@ -61,6 +61,6 @@ const uploadAvatar = async (
   return response.data;
 };
 
-const volunteerAPI = { register, uploadAvatar };
+const volunteerServices = { register, uploadAvatar };
 
-export default volunteerAPI;
+export default volunteerServices;

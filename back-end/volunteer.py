@@ -64,7 +64,7 @@ def volunteer_avatar(file: UploadFile = File(...), user_id: int = Depends(get_cu
         raise HTTPException(status_code=404, detail="Volunteer profile not found")
     
     ext = file.content_type.split("/")[1] # image/jpeg -> jpeg
-    save_dir = "uploads/avatars/volunteers"
+    save_dir = "../uploads/avatars/volunteers"
     os.makedirs(save_dir, exist_ok=True)
     file_path = f"{save_dir}/{volunteer.id}.{ext}"
 
