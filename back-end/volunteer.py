@@ -25,6 +25,11 @@ router = APIRouter(prefix="/volunteer", tags=["volunteer"])
 @router.post("/register", response_model=dict[str, str])
 def volunteer_register(volunteer: VolunteerCreate, user_id: int = Depends(get_current_user_id), session: Session = Depends(get_session)):
 
+    if get_volunteer_by_user_id(session, user_id):
+        return {
+            "status": "Error",
+            "message": "You already have a volunteer profile!"
+        }
     # We create a volunteer object that will be saved to database
     # We need to remove elements that will go into junction tables
     # And add in user_id that we retrieve from the token
