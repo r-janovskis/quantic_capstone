@@ -38,3 +38,12 @@ def get_all_volunteers(session: Session) -> list[Volunteer]:
     statement = select(Volunteer)
     return list(session.exec(statement).all())
 
+def get_volunteer_by_user_id(session: Session, user_id: int) -> Volunteer | None:
+    statement = select(Volunteer).where(Volunteer.user_id == user_id)
+    return session.exec(statement).first()
+
+def update_volunteer_avatar(session: Session, volunteer: Volunteer, avatar_url: str) -> None:
+    volunteer.avatar_url = avatar_url
+    session.add(volunteer)
+    session.commit()
+    

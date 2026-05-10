@@ -5,7 +5,7 @@ from datetime import date
 
 class VolunteerBase(SQLModel):
     display_name: str
-    avatar: Optional[str] = None
+    avatar_url: Optional[str] = None
     first_name: str
     last_name: str
     phone: str
