@@ -4,6 +4,8 @@ from database import get_session
 from auth import get_current_user_id
 from database.models.volunteer import VolunteerBase, Volunteer
 from database.repositories.volunteer_repo import create_volunteer, create_volunteer_skills, create_volunteer_languages, create_volunteer_interests, get_volunteer_by_user_id, update_volunteer_avatar
+from PIL import Image
+import io
 import os
 
 class VolunteerCreate(VolunteerBase):
@@ -61,8 +63,11 @@ def volunteer_avatar(file: UploadFile = File(...), user_id: int = Depends(get_cu
     os.makedirs(save_dir, exist_ok=True)
     file_path = f"{save_dir}/{volunteer.id}.{ext}"
 
-    with open(file_path, "wb") as f:
-        f.write(file.file.read())
+    # We save avatar image using Pillow package
+    # And resize it to be just a bit bigger than avatar preview window 200x200
+    image = Image.open(io.BytesIO(file.file.read()))
+    image.thumbnail((200, 200))
+    image.save(file_path)
 
     update_volunteer_avatar(session, volunteer, file_path)
 
