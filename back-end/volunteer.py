@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlmodel import Session
 from database import get_session
 from auth import get_current_user_id
 from database.models.volunteer import VolunteerBase, Volunteer
-from database.repositories.volunteer_repo import create_volunteer, create_volunteer_skills, create_volunteer_languages, create_volunteer_interests
+from database.repositories.volunteer_repo import create_volunteer, create_volunteer_skills, create_volunteer_languages, create_volunteer_interests, get_volunteer_by_user_id, update_volunteer_avatar
+import os
 
 class VolunteerCreate(VolunteerBase):
     country_id: int
@@ -44,3 +45,28 @@ def volunteer_register(volunteer: VolunteerCreate, user_id: int = Depends(get_cu
         "message": "Volunteer registered successfully!"
     }
 
+@router.post("/avatar", response_model=dict[str, str])
+def volunteer_avatar(file: UploadFile = File(...), user_id: int = Depends(get_current_user_id), session: Session = Depends(get_session)):
+
+    ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
+    if file.content_type not in ALLOWED_TYPES:
+        raise HTTPException(status_code=400, detail="File must be an image (jpeg, png, or webp)")
+
+    volunteer = get_volunteer_by_user_id(session, user_id)
+    if not volunteer:
+        raise HTTPException(status_code=404, detail="Volunteer profile not found")
+    
+    ext = file.content_type.split("/")[1] # image/jpeg -> jpeg
+    save_dir = "uploads/avatars/volunteers"
+    os.makedirs(save_dir, exist_ok=True)
+    file_path = f"{save_dir}/{volunteer.id}.{ext}"
+
+    with open(file_path, "wb") as f:
+        f.write(file.file.read())
+
+    update_volunteer_avatar(session, volunteer, file_path)
+
+    return {
+        "status": "Success",
+        "message": "Avatar uploaded successfully!"
+    }
