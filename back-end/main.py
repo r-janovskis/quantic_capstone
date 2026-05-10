@@ -33,7 +33,7 @@ app.add_middleware(
 
 # Serve static files
 # Necessary so we could save avatars and other filers
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+app.mount("/uploads", StaticFiles(directory="../uploads"), name="uploads")
 
 
 @app.get("/health", response_model=dict[str, str], status_code=200, tags=["health"])
