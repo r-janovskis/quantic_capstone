@@ -31,7 +31,17 @@ class UserRequest(UserBase):
         
         return v
 
+def get_current_user_id(authorization: str = Header()) -> int:
+    """
+    Retrieves user_id from the authorization header
+    """
+    token = authorization.removeprefix("Bearer ")
+    payload = verify_token(token)
+    return int(payload["sub"])
 
+# ------------------------------------------------
+# Below we have the actual enpdpoint for /auth/...
+# ------------------------------------------------
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
