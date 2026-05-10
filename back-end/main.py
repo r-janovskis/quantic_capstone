@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlmodel import SQLModel
 from contextlib import asynccontextmanager
 import database
 
 import auth
 import lookup
+import volunteer
 
 # Initialise database when app is started
 @asynccontextmanager
@@ -29,6 +31,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Serve static files
+# Necessary so we could save avatars and other filers
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 
 @app.get("/health", response_model=dict[str, str], status_code=200, tags=["health"])
 def health():
@@ -38,6 +44,7 @@ def health():
 # Add auth routes to the app
 app.include_router(auth.router)
 app.include_router(lookup.router)
+app.include_router(volunteer.router)
 
 # Command to run the app
 # uvicorn main:app --reload
