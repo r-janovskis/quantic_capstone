@@ -12,24 +12,24 @@ def create_volunteer(session: Session, volunteer: Volunteer) -> Volunteer:
     session.refresh(volunteer)
     return volunteer
 
-def create_volunteer_skills(session: Session,volunteer_id: int, skills: list[int]) -> None:
+def create_volunteer_skills(session: Session,volunteer_id: int, skill_ids: list[int]) -> None:
     session.add_all([
         VolunteerSkill(volunteer_id=volunteer_id, skill_id=skill_id) 
-        for skill_id in skills
+        for skill_id in skill_ids
     ])
     session.commit()
 
-def create_volunteer_interests(session: Session, volunteer_id: int, interests: list[int]) -> None:
+def create_volunteer_interests(session: Session, volunteer_id: int, interest_ids: list[int]) -> None:
     session.add_all([
         VolunteerInterest(volunteer_id=volunteer_id, interest_id=interest_id) 
-        for interest_id in interests
+        for interest_id in interest_ids
     ])
     session.commit()
 
-def create_volunteer_languages(session: Session, volunteer_id: int, languages: list[int]) -> None:
+def create_volunteer_languages(session: Session, volunteer_id: int, language_ids: list[int]) -> None:
     session.add_all([
         VolunteerLanguage(volunteer_id=volunteer_id, language_id=language_id)
-        for language_id in languages
+        for language_id in language_ids
     ])
     session.commit()
 
