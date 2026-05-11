@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 import database
+import database.seeds
 import os
 
 import auth
@@ -13,12 +14,12 @@ import volunteer
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     database.create_db_and_tables()
-    database.seed_statuses()
-    database.seed_skills()
-    database.seed_languages()
-    database.seed_countries()
-    database.seed_shirt_sizes()
-    database.seed_interests()
+    database.seeds.seed_statuses()
+    database.seeds.seed_skills()
+    database.seeds.seed_languages()
+    database.seeds.seed_countries()
+    database.seeds.seed_shirt_sizes()
+    database.seeds.seed_interests()
     yield
 
 app = FastAPI(lifespan=lifespan)
