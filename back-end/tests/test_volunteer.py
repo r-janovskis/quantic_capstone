@@ -43,7 +43,6 @@ class TestVolunteerRegistrer:
             json=VALID_VOLUNTEER, 
             headers={"Authorization": f"Bearer {token}"}
         )
-        
         assert response.status_code == 200
         assert response.json()["status"] == "Success"
 
@@ -55,7 +54,6 @@ class TestVolunteerRegistrer:
             json=VALID_VOLUNTEER, 
             headers={"Authorization": f"Bearer {token}"}
         )
-        
         assert response.status_code == 200
         assert response.json()["status"] == "Error"
         assert response.json()["message"] == "You already have a volunteer profile!"
@@ -67,7 +65,6 @@ class TestVolunteerRegistrer:
             json=VALID_VOLUNTEER, 
             headers={"Authorization": "Bearer INVALID_TOKEN"}
         )
-
         assert response.status_code == 401 
 
 
@@ -81,7 +78,6 @@ class TestVolunteerRegistrer:
             json=invalid_volunteer,
             headers={"Authorization": f"Bearer {token}"}    
         )
-
         assert response.status_code == 422
 
     
@@ -95,6 +91,7 @@ class TestVolunteerRegistrer:
             json=invalid_volunteer,
             headers={"Authorization": f"Bearer {token}"}
         )
+        assert response.status_code == 422
 
 
 class TestAvatarUpload:
@@ -110,7 +107,6 @@ class TestAvatarUpload:
                 files={"file": ("avatar.jpg", image, "image/jpeg")},
                 headers={"Authorization": f"Bearer {token}"}
             )
-
         assert response.status_code == 200
         assert response.json()["status"] == "Success"
 
@@ -122,7 +118,6 @@ class TestAvatarUpload:
             files={"file": ("document.pdf", b"Fake content", "application/pdf")},
             headers={"Authorization": f"Bearer {token}"}
         )
-
         assert response.status_code == 400
         
 
@@ -133,7 +128,6 @@ class TestAvatarUpload:
             files={"file": ("avatar.jpg", b"Fake content", "image/jpeg")},
             headers={"Authorization": f"Bearer {token}"}
         )
-
         assert response.status_code == 404
 
 
@@ -143,5 +137,4 @@ class TestAvatarUpload:
             files={"file": ("avatar.jpg", b"Fake content", "image/jpeg")},
             headers={"Authorization": "Bearer INVALID_TOKEN"}
         )
-
         assert response.status_code == 401
