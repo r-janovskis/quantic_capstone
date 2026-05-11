@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlmodel import Session
 from database import get_session
-from auth import get_current_user_id
+from dependencies import get_current_user_id
 from database.models.volunteer import VolunteerBase, Volunteer
 from database.repositories.volunteer_repo import create_volunteer, create_volunteer_skills, create_volunteer_languages, create_volunteer_interests, get_volunteer_by_user_id, update_volunteer_avatar
 from PIL import Image
