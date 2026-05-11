@@ -64,7 +64,7 @@ class TestVolunteerRegistrer:
         response = client.post(
             "/volunteer/register", 
             json=VALID_VOLUNTEER, 
-            headers={"Authorization": f"Bearer INVALID_TOKEN"}
+            headers={"Authorization": "Bearer INVALID_TOKEN"}
         )
 
         assert response.status_code == 401 
