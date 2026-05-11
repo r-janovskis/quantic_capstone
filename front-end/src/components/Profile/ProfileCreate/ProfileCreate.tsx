@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
 import MultiSelectField from "../../shared/MultiSelectField/MultiSelectField";
+import AvatarUpload from "../../shared/AvatarUpload/AvatarUpload";
 import lookupServices from "../../../services/lookupAPI";
 import volunteerServices from "../../../services/volunteerAPI";
 
@@ -23,7 +24,7 @@ function ProfileCreate() {
     interests: false,
     languages: false,
   });
-  const [avatarFeedback, setAvatarFeedback] = useState("");
+
   const [ageFeedback, setAgeFeedback] = useState("");
 
   // Values we load from API calls and display in dropdowns
@@ -33,34 +34,15 @@ function ProfileCreate() {
   const [shirtSizes, setShirtSizes] = useState<Option[]>([]);
   const [interests, setInterests] = useState<Option[]>([]);
 
+  // Managing selected values in multi-select fields
   const [selectedSkills, setSelectedSkills] = useState<Option[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<Option[]>([]);
   const [selectedLanguages, setSelectedLanguages] = useState<Option[]>([]);
 
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-
+  // For displaying messages in case something went wrong while registering volunteer
   const [showMessage, setShowMessage] = useState(false);
   const [messageType, setMessageType] = useState("");
   const [APIMessage, setAPIMessage] = useState("");
-
-  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.currentTarget.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setAvatarPreview(reader.result as string);
-      reader.readAsDataURL(file);
-
-      if (file.size > 2 * 1024 * 1024) {
-        event.currentTarget.setCustomValidity(
-          "We only accept files smaller than 2MB"
-        );
-        setAvatarFeedback("We only accept files smaller than 2MB");
-      } else {
-        event.currentTarget.setCustomValidity("");
-        setAvatarFeedback("");
-      }
-    }
-  };
 
   const handleVolunteerFormSubmit = (
     event: React.SubmitEvent<HTMLFormElement>
@@ -238,33 +220,7 @@ function ProfileCreate() {
             <fieldset className="display-info-section">
               <h3>Display Information</h3>
               <div className="display-info-layout">
-                <div className="avatar-section">
-                  <div className="avatar-preview">
-                    {avatarPreview ? (
-                      <img
-                        src={avatarPreview ?? undefined}
-                        alt="Avatar preview"
-                      />
-                    ) : (
-                      <span className="avatar-placeholder">No image</span>
-                    )}
-                  </div>
-                  <Form.Group>
-                    <Form.Label htmlFor="avatar">Profile Picture</Form.Label>
-                    <Form.Control
-                      id="avatar"
-                      name="avatar"
-                      type="file"
-                      accept="image/jpeg, image/png, image/webp"
-                      onChange={handleAvatarChange}
-                      isInvalid={!!avatarFeedback}
-                    />
-                    <Form.Text>JPEG, PNG, or WebP - max 2MB</Form.Text>
-                    <Form.Control.Feedback type="invalid">
-                      {avatarFeedback}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                </div>
+                <AvatarUpload />
                 <div className="display-name-section">
                   <Form.Group>
                     <Form.Label htmlFor="display_name">Display Name</Form.Label>
