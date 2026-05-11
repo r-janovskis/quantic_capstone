@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
-import Select from "react-select";
-import type { MultiValue } from "react-select";
+import MultiSelectField from "../../shared/MultiSelectField/MultiSelectField";
 import lookupServices from "../../../services/lookupAPI";
 import volunteerServices from "../../../services/volunteerAPI";
 
@@ -345,87 +344,42 @@ function ProfileCreate() {
               </div>
               <h3>Getting to know you</h3>
               <div className="volunteer-motivation">
-                <Form.Group className="entry-volunteer">
-                  <Form.Label htmlFor="skills">
-                    What skills or previous experiences do you have?
-                  </Form.Label>
-                  <Select
-                    id="skills"
-                    name="skills"
-                    isMulti
-                    closeMenuOnSelect={false}
-                    options={skills}
-                    onChange={(selected: MultiValue<Option>) => {
-                      setSelectedSkills([...selected]);
-                      if (selected.length > 0)
-                        setErrors((prev) => ({ ...prev, skills: false }));
-                    }}
-                    styles={{
-                      control: (base) => ({
-                        ...base,
-                        borderColor: errors.skills
-                          ? "#dc3545"
-                          : selectedSkills.length > 0
-                          ? "#198754"
-                          : base.borderColor,
-                      }),
-                    }}
-                  />
-                </Form.Group>
-                <Form.Group className="entry-volunteer">
-                  <Form.Label htmlFor="interests">
-                    Where would you be interested to volunteer?
-                  </Form.Label>
-                  <Select
-                    id="interests"
-                    name="interests"
-                    isMulti
-                    closeMenuOnSelect={false}
-                    options={interests}
-                    onChange={(selected: MultiValue<Option>) => {
-                      setSelectedInterests([...selected]);
-                      if (selected.length > 0)
-                        setErrors((prev) => ({ ...prev, interests: false }));
-                    }}
-                    styles={{
-                      control: (base) => ({
-                        ...base,
-                        borderColor: errors.interests
-                          ? "#dc3545"
-                          : selectedInterests.length > 0
-                          ? "#198754"
-                          : base.borderColor,
-                      }),
-                    }}
-                  />
-                </Form.Group>
-                <Form.Group className="entry-volunteer">
-                  <Form.Label htmlFor="languages">
-                    What languages do you speak?
-                  </Form.Label>
-                  <Select
-                    id="languages"
-                    name="languages"
-                    isMulti
-                    closeMenuOnSelect={false}
-                    options={languages}
-                    onChange={(selected: MultiValue<Option>) => {
-                      setSelectedLanguages([...selected]);
-                      if (selected.length > 0)
-                        setErrors((prev) => ({ ...prev, languages: false }));
-                    }}
-                    styles={{
-                      control: (base) => ({
-                        ...base,
-                        borderColor: errors.languages
-                          ? "#dc3545"
-                          : selectedLanguages.length > 0
-                          ? "#198754"
-                          : base.borderColor,
-                      }),
-                    }}
-                  />
-                </Form.Group>
+                <MultiSelectField
+                  id="skills"
+                  label="What skills (previous experiences) do you have?"
+                  value={selectedSkills}
+                  options={skills}
+                  onChange={(selected: Option[]) => {
+                    setSelectedSkills([...selected]);
+                    if (selected.length > 0)
+                      setErrors((prev) => ({ ...prev, skills: false }));
+                  }}
+                  isInvalid={errors.skills}
+                />
+                <MultiSelectField
+                  id="interests"
+                  label="Where would you like to volunteer?"
+                  value={selectedInterests}
+                  options={interests}
+                  onChange={(selected: Option[]) => {
+                    setSelectedInterests([...selected]);
+                    if (selected.length > 0)
+                      setErrors((prev) => ({ ...prev, interests: false }));
+                  }}
+                  isInvalid={errors.interests}
+                />
+                <MultiSelectField
+                  id="languages"
+                  label="What languages do you speak?"
+                  value={selectedLanguages}
+                  options={languages}
+                  onChange={(selected: Option[]) => {
+                    setSelectedLanguages([...selected]);
+                    if (selected.length > 0)
+                      setErrors((prev) => ({ ...prev, languages: false }));
+                  }}
+                  isInvalid={errors.languages}
+                />
                 <Form.Group className="entry-volunteer">
                   <Form.Label htmlFor="shirt_size">
                     What t-shirt size do you prefer?
