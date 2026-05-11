@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
@@ -6,7 +6,6 @@ import Alert from "react-bootstrap/Alert";
 import MultiSelectField from "../../shared/MultiSelectField/MultiSelectField";
 import AvatarUpload from "../../shared/AvatarUpload/AvatarUpload";
 
-import lookupServices from "../../../services/lookupAPI";
 import useLookupData from "../../../hooks/useLookupData";
 import volunteerServices from "../../../services/volunteerAPI";
 
