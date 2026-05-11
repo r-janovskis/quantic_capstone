@@ -1,10 +1,7 @@
 import Select from "react-select";
 import { Form } from "react-bootstrap";
 
-type Option = {
-  value: number;
-  label: string;
-};
+import type { Option } from "../../../types";
 
 interface Props {
   id: string;

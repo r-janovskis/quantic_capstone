@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Form } from "react-bootstrap";
 
+import "./AvatarUpload.css";
+
 interface Props {
   name?: string;
   label?: string;
