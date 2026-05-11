@@ -1,12 +1,8 @@
-import { useState } from "react";
-
-import Header from "../Header/Header";
+import Header from "../headers/Header/Header";
 
 import "./Home.css";
 
 function Home() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
       <Header />

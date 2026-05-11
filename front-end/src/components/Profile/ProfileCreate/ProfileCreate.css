@@ -1,0 +1,38 @@
+main {
+  display: block;
+  min-height: 70vh;
+}
+main h1 {
+  text-align: center;
+  margin: 2rem auto 3rem auto;
+}
+
+.user-type-selection {
+  width: 70%;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  gap: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid black;
+  margin: 2rem auto;
+}
+
+.user-type-options {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.user-type-options input {
+  border-color: black;
+}
+
+.user-type-selection ul {
+  list-style: none;
+  padding: 0;
+}
+
+.bold {
+  font-weight: 700;
+}

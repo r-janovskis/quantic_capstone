@@ -3,6 +3,16 @@ from fastapi.testclient import TestClient
 from sqlmodel import SQLModel, create_engine, Session
 from database.models.status import Status
 from database.models.user import User # noqa: F401
+from database.models.skill import Skill 
+from database.models.country import Country
+from database.models.shirt_size import ShirtSize
+from database.models.interest import Interest
+from database.models.language import Language
+from database.models.volunteer import Volunteer # noqa: F401
+from database.models.volunteer_skill import VolunteerSkill # noqa: F401
+from database.models.volunteer_interest import VolunteerInterest # noqa: F401
+from database.models.volunteer_language import VolunteerLanguage # noqa: F401
+
 
 TEST_DB_URL = "postgresql+psycopg2://test_user:test_password@localhost:5432/test_db"
 
@@ -16,7 +26,14 @@ def override_get_session():
 def setup_database():
     SQLModel.metadata.create_all(test_engine)
     with Session(test_engine) as session:
-        session.add_all([Status(name="New"), Status(name="Active")])
+        session.add_all([
+            Status(name="New"), Status(name="Active"),
+            Country(name="Ireland"), 
+            ShirtSize(name="M"), 
+            Skill(name="Driving"),
+            Interest(name="Elderly care & companionship"),
+            Language(name="English"),
+        ])
         session.commit()
     yield
     SQLModel.metadata.drop_all(test_engine)

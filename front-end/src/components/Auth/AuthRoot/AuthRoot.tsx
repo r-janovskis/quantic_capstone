@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import AuthHeader from "../AuthHeader/AuthHeader";
+import AuthHeader from "../../headers/AuthHeader/AuthHeader";
 
 function Root() {
   return (

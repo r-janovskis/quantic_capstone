@@ -152,20 +152,24 @@ function SignUp() {
             onChange={handlePassword}
             required
           />
-          <ul className="password-checklist">
-            <li style={{ color: passwordChecks.length ? "green" : "red" }}>
-              At least 10 characters
-            </li>
-            <li style={{ color: passwordChecks.uppercase ? "green" : "red" }}>
-              At least one capital letter
-            </li>
-            <li style={{ color: passwordChecks.number ? "green" : "red" }}>
-              At least one number
-            </li>
-            <li style={{ color: passwordChecks.specialChar ? "green" : "red" }}>
-              At least one special character
-            </li>
-          </ul>
+          <Form.Text>
+            <ul className="password-checklist">
+              <li style={{ color: passwordChecks.length ? "green" : "red" }}>
+                At least 10 characters
+              </li>
+              <li style={{ color: passwordChecks.uppercase ? "green" : "red" }}>
+                At least one capital letter
+              </li>
+              <li style={{ color: passwordChecks.number ? "green" : "red" }}>
+                At least one number
+              </li>
+              <li
+                style={{ color: passwordChecks.specialChar ? "green" : "red" }}
+              >
+                At least one special character
+              </li>
+            </ul>
+          </Form.Text>
         </Form.Group>
         <Form.Group className="row">
           <Form.Label htmlFor="confirm_password">Repeat Password:</Form.Label>
