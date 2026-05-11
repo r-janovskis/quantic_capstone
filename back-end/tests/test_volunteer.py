@@ -26,6 +26,13 @@ def get_token(client, email, password="Password123!"):
     return response.json()["token"]
 
 
+def create_test_image():
+    image = Image.new('RGB', (100, 100), color="red")
+    buf = io.BytesIO()
+    image.save(buf, format="JPEG")
+    buf.seek(0)
+    return buf
+
 class TestVolunteerRegistrer:
     
     def test_register_success(self, client):
@@ -76,3 +83,51 @@ class TestVolunteerRegistrer:
 
         assert response.status_code == 422
 
+
+class TestAvatarUpload:
+
+    def test_upload_avatar_success(self, client):
+        token = get_token(client, "volunteer@example.com")
+        image = create_test_image()
+        response = client.post(
+            "/volunteer/avatar",
+            files={"file": ("avatar.jpg", image, "image/jpeg")},
+            headers={"Authorization": f"Bearer {token}"}
+        )
+
+        assert response.status_code == 200
+        assert response.json()["status"] == "Success"
+
+    
+    def test_upload_avatar_with_wrong_type(self, client):
+        token = get_token(client, "volunteer@example.com")
+        response = client.post(
+            "/volunteer/avatar",
+            files={"file": ("document.pdf", b"Fake content", "application/pdf")},
+            headers={"Authorization": f"Bearer {token}"}
+        )
+
+        assert response.status_code == 400
+        
+
+    def test_upload_avatar_with_no_volunteer_profile(self, client):
+        token = get_token(client, "organiser@example.com")
+        image = create_test_image()
+        response = client.post(
+            "/volunteer/avatar",
+            files={"file": ("avatar.jpg", image, "image/jpeg")},
+            headers={"Authorization": f"Bearer {token}"}
+        )
+
+        assert response.status_code == 404
+
+
+    def test_upload_avatar_with_invalid_token(self, client):
+        image = create_test_image()
+        response = client.post(
+            "/volunteer/avatar",
+            files={"file": ("avatar.jpg", image, "image/jpeg")},
+            headers={"Authorization": "Bearer INVALID_TOKEN"}
+        )
+
+        assert response.status_code == 401
