@@ -10,7 +10,8 @@ from database.models.shirt_size import ShirtSize
 from database.models.interest import Interest
 
 
-
+# Functions to seed tables with values
+# These are pre-defined values we use in our forms in front-end
 
 def seed_statuses():
 
