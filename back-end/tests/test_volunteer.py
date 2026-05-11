@@ -84,6 +84,18 @@ class TestVolunteerRegistrer:
 
         assert response.status_code == 422
 
+    
+    def test_register_age_under_18(self, client):
+        invalid_volunteer = VALID_VOLUNTEER.copy()
+        invalid_volunteer["date_of_birth"] = "2020-01-01"
+        
+        token = get_token(client, "volunteer@example.com")
+        response = client.post(
+            "/volunteer/register",
+            json=invalid_volunteer,
+            headers={"Authorization": f"Bearer {token}"}
+        )
+
 
 class TestAvatarUpload:
 
