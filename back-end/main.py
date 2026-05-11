@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 import database
+import os
 
 import auth
 import lookup
@@ -30,6 +31,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+os.makedirs("../uploads", exist_ok=True)
 # Serve static files
 # Necessary so we could save avatars and other filers
 app.mount("/uploads", StaticFiles(directory="../uploads"), name="uploads")
