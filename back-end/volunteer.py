@@ -1,38 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlmodel import Session
-from pydantic import field_validator, BaseModel
 from datetime import date
 from database import get_session
 from dependencies import get_current_user_id
-from database.models.volunteer import VolunteerBase, Volunteer
-from database.repositories.volunteer_repo import create_volunteer, create_volunteer_skills, create_volunteer_languages, create_volunteer_interests, get_volunteer_by_user_id, update_volunteer_avatar
+from schemas.volunteerCreate import VolunteerCreate
+from database.models.volunteer import Volunteer
+from database.repositories.volunteer_repo import create_volunteer, create_volunteer_skills, create_volunteer_languages, create_volunteer_interests, create_volunteer_availability, get_volunteer_by_user_id, update_volunteer_avatar
 from PIL import Image
 import io
 import os
 
-
-class Availability(BaseModel):
-    day_id: int
-    time_period_id: int
-
-class VolunteerCreate(VolunteerBase):
-    country_id: int
-    shirt_size_id: int
-    skill_ids: list[int]
-    interest_ids: list[int]
-    language_ids: list[int]
-    availability: list[Availability]
-
-    @field_validator("date_of_birth")
-    @classmethod
-    def validate_age(cls, v: date) -> date:
-        age = (date.today() - v).days / 365.25
-        if age < 18:
-            raise ValueError("You must be at least 18 years old to register!")
-        return v
-    # We are not doing any special field sanitazation/validation on the back end
-    # React by default should block this.
-    # We could use bleach package to sanitize input
 
 
 router = APIRouter(prefix="/volunteer", tags=["volunteer"])
@@ -49,7 +26,7 @@ def volunteer_register(volunteer: VolunteerCreate, user_id: int = Depends(get_cu
     # We need to remove elements that will go into junction tables
     # And add in user_id that we retrieve from the token
     new_volunteer = Volunteer(
-        **volunteer.model_dump(exclude={"skill_ids", "interest_ids", "language_ids"}),
+        **volunteer.model_dump(exclude={"skill_ids", "interest_ids", "language_ids", "availability"}),
         user_id=user_id
     )
     # Save new volunteer to database
@@ -61,6 +38,7 @@ def volunteer_register(volunteer: VolunteerCreate, user_id: int = Depends(get_cu
     create_volunteer_skills(session, saved_volunteer.id, volunteer.skill_ids)
     create_volunteer_interests(session, saved_volunteer.id, volunteer.interest_ids)
     create_volunteer_languages(session, saved_volunteer.id, volunteer.language_ids)
+    create_volunteer_availability(session, saved_volunteer.id, volunteer.availability)
 
     return {
         "status": "Success",

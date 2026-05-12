@@ -1,8 +1,10 @@
 from sqlmodel import Session, select
+from schemas.availability import Availability
 from database.models.volunteer import Volunteer
 from database.models.volunteer_skill import VolunteerSkill
 from database.models.volunteer_interest import VolunteerInterest
 from database.models.volunteer_language import VolunteerLanguage
+from database.models.volunteer_availability import VolunteerAvailability
 
 
 
@@ -30,6 +32,13 @@ def create_volunteer_languages(session: Session, volunteer_id: int, language_ids
     session.add_all([
         VolunteerLanguage(volunteer_id=volunteer_id, language_id=language_id)
         for language_id in language_ids
+    ])
+    session.commit()
+
+def create_volunteer_availability(session: Session, volunteer_id: int, availability: list[Availability]) -> None:
+    session.add_all([
+        VolunteerAvailability(volunteer_id=volunteer_id, day_id=availability_slot.day_id, time_period_id=availability_slot.time_period_id)
+        for availability_slot in availability
     ])
     session.commit()
 
