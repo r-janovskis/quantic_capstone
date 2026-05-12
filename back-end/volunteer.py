@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlmodel import Session
-from pydantic import field_validator
+from pydantic import field_validator, BaseModel
 from datetime import date
 from database import get_session
 from dependencies import get_current_user_id
@@ -10,20 +10,26 @@ from PIL import Image
 import io
 import os
 
+
+class Availability(BaseModel):
+    day_id: int
+    time_period_id: int
+
 class VolunteerCreate(VolunteerBase):
     country_id: int
     shirt_size_id: int
     skill_ids: list[int]
     interest_ids: list[int]
     language_ids: list[int]
+    availability: list[Availability]
 
     @field_validator("date_of_birth")
     @classmethod
     def validate_age(cls, v: date) -> date:
-         age = (date.today() - v).days / 365.25
-         if age < 18:
-              raise ValueError("You must be at least 18 years old to register!")
-         return v
+        age = (date.today() - v).days / 365.25
+        if age < 18:
+            raise ValueError("You must be at least 18 years old to register!")
+        return v
     # We are not doing any special field sanitazation/validation on the back end
     # React by default should block this.
     # We could use bleach package to sanitize input
