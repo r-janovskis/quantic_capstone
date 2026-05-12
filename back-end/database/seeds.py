@@ -1,5 +1,6 @@
 from sqlmodel import Session, select
 from database import engine
+from datetime import time
 
 # Import tables that we are seeding values for
 from database.models.status import Status
@@ -8,6 +9,8 @@ from database.models.language import Language
 from database.models.country import Country
 from database.models.shirt_size import ShirtSize
 from database.models.interest import Interest
+from database.models.day import Day
+from database.models.time_period import TimePeriod
 
 
 # Functions to seed tables with values
@@ -139,5 +142,38 @@ def seed_shirt_sizes():
             ShirtSize(name="L"),
             ShirtSize(name="XL"),
             ShirtSize(name="2XL"),
+        ])
+        session.commit()
+
+
+def seed_days():
+
+    with Session(engine) as session:
+        if session.exec(select(Day)).first():
+            return
+        session.add_all([
+            Day(name="Monday"),
+            Day(name="Tuesday"),
+            Day(name="Wednesday"),
+            Day(name="Thursday"),
+            Day(name="Friday"),
+            Day(name="Saturday"),
+            Day(name="Sunday"),
+            Day(name="Working days"),
+            Day(name="Weekends"),
+        ])
+        session.commit()
+
+
+def seed_time_periods():
+
+    with Session(engine) as session:
+        if session.exec(select(TimePeriod)).first():
+            return
+        session.add_all([
+            TimePeriod(name="Morning", start_time=time(8, 0), end_time=time(12, 0)),
+            TimePeriod(name="Afternoon", start_time=time(13, 0), end_time=time(17, 0)),
+            TimePeriod(name="Evening", start_time=time(18, 0), end_time=time(22, 0)),
+            TimePeriod(name="Whole day", start_time=time(8, 0), end_time=time(22, 0)),
         ])
         session.commit()
