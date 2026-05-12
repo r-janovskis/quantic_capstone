@@ -12,6 +12,8 @@ from database.models.country import Country # noqa: F401
 from database.models.shirt_size import ShirtSize # noqa: F401
 from database.models.interest import Interest # noqa: F401
 from database.models.volunteer import Volunteer # noqa: F401
+from database.models.day import Day # noqa: F401
+from database.models.time_period import TimePeriod # noqa: F401
 from database.models.volunteer_skill import VolunteerSkill # noqa: F401
 from database.models.volunteer_interest import VolunteerInterest # noqa: F401
 from database.models.volunteer_language import VolunteerLanguage # noqa: F401

@@ -1,4 +1,5 @@
 import pytest
+from datetime import time
 from fastapi.testclient import TestClient
 from sqlmodel import SQLModel, create_engine, Session
 from database.models.status import Status
@@ -8,6 +9,8 @@ from database.models.country import Country
 from database.models.shirt_size import ShirtSize
 from database.models.interest import Interest
 from database.models.language import Language
+from database.models.day import Day
+from database.models.time_period import TimePeriod
 from database.models.volunteer import Volunteer # noqa: F401
 from database.models.volunteer_skill import VolunteerSkill # noqa: F401
 from database.models.volunteer_interest import VolunteerInterest # noqa: F401
@@ -33,6 +36,8 @@ def setup_database():
             Skill(name="Driving"),
             Interest(name="Elderly care & companionship"),
             Language(name="English"),
+            Day(name="Monday"),
+            TimePeriod(name="Morning", start_time=time(8, 0), end_time=time(12, 0)),
         ])
         session.commit()
     yield
