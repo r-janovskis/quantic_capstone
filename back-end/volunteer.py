@@ -5,7 +5,7 @@ from database import get_session
 from dependencies import get_current_user_id
 from schemas.volunteerCreate import VolunteerCreate
 from database.models.volunteer import Volunteer
-from database.repositories.volunteer_repo import create_volunteer, create_volunteer_skills, create_volunteer_languages, create_volunteer_interests, create_volunteer_availability, get_volunteer_by_user_id, update_volunteer_avatar
+from database.repositories.volunteer_repo import create_volunteer, update_volunteer, create_volunteer_skills, update_volunteer_skills, create_volunteer_languages, update_volunteer_languages, create_volunteer_interests, update_volunteer_interests, create_volunteer_availability, update_volunteer_availability, get_volunteer_by_user_id, update_volunteer_avatar
 from PIL import Image
 import io
 import os
@@ -32,9 +32,9 @@ def volunteer_register(volunteer: VolunteerCreate, user_id: int = Depends(get_cu
     # Save new volunteer to database
     saved_volunteer = create_volunteer(session, new_volunteer)
     if saved_volunteer.id is None:
-            raise HTTPException(status_code=500, detail="Something went wrong, please try again later")
+        raise HTTPException(status_code=500, detail="Something went wrong, please try again later")
     
-    # Save his skills, interests and languages to database
+    # Save his skills, interests, languages, and availability to database
     create_volunteer_skills(session, saved_volunteer.id, volunteer.skill_ids)
     create_volunteer_interests(session, saved_volunteer.id, volunteer.interest_ids)
     create_volunteer_languages(session, saved_volunteer.id, volunteer.language_ids)
@@ -44,6 +44,37 @@ def volunteer_register(volunteer: VolunteerCreate, user_id: int = Depends(get_cu
         "status": "Success",
         "message": "Volunteer registered successfully!"
     }
+
+
+@router.put("/me", response_model=dict[str, str])
+def volunteer_update(volunteer: VolunteerCreate, user_id: int = Depends(get_current_user_id), session: Session = Depends(get_session)):
+    
+    existing_volunteer = get_volunteer_by_user_id(session, user_id)
+    if not existing_volunteer:
+        raise HTTPException(status_code=404, detail="Volunteer profile not found")
+    
+    # Extracting data from volunteer object that was submitted
+    volunteer_data = volunteer.model_dump(exclude={"skill_ids", "interest_ids", "language_ids", "availability"})
+    # Updating existing vlunteer with the new values
+    for key, value in volunteer_data.items():
+        setattr(existing_volunteer, key, value)
+    
+    # Save updated values into database
+    updated_volunteer = update_volunteer(session, existing_volunteer)
+    if updated_volunteer.id is None:
+        raise HTTPException(status_code=500, detail="Something went wrong, please try again later")
+    
+    # Update skills, interests, languages and availability
+    update_volunteer_skills(session, updated_volunteer.id, volunteer.skill_ids)
+    update_volunteer_interests(session, updated_volunteer.id, volunteer.interest_ids)
+    update_volunteer_languages(session, updated_volunteer.id, volunteer.language_ids)
+    update_volunteer_availability(session, updated_volunteer.id, volunteer.availability)
+
+    return {
+        "status": "Success",
+        "message": "Volunteer updated successfully!"
+    }
+
 
 @router.post("/avatar", response_model=dict[str, str])
 def volunteer_avatar(file: UploadFile = File(...), user_id: int = Depends(get_current_user_id), session: Session = Depends(get_session)):
@@ -73,3 +104,5 @@ def volunteer_avatar(file: UploadFile = File(...), user_id: int = Depends(get_cu
         "status": "Success",
         "message": "Avatar uploaded successfully!"
     }
+
+
