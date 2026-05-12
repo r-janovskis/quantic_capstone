@@ -17,6 +17,7 @@ from database.models.time_period import TimePeriod # noqa: F401
 from database.models.volunteer_skill import VolunteerSkill # noqa: F401
 from database.models.volunteer_interest import VolunteerInterest # noqa: F401
 from database.models.volunteer_language import VolunteerLanguage # noqa: F401
+from database.models.volunteer_availability import VolunteerAvailability # noqa: F401
 
 # Load environment variables from .env file
 load_dotenv()
