@@ -15,7 +15,8 @@ VALID_VOLUNTEER = {
     "shirt_size_id": 1,
     "skill_ids": [1],
     "interest_ids": [1],
-    "language_ids": [1]
+    "language_ids": [1],
+    "availability": [{"day_id": 1, "time_period_id": 1}]
 }
 
 def get_token(client, email, password="Password123!"):

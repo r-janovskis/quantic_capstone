@@ -15,6 +15,7 @@ from database.models.volunteer import Volunteer # noqa: F401
 from database.models.volunteer_skill import VolunteerSkill # noqa: F401
 from database.models.volunteer_interest import VolunteerInterest # noqa: F401
 from database.models.volunteer_language import VolunteerLanguage # noqa: F401
+from database.models.volunteer_availability import VolunteerAvailability # noqa: F401
 
 
 TEST_DB_URL = "postgresql+psycopg2://test_user:test_password@localhost:5432/test_db"
