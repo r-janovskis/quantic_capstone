@@ -52,6 +52,6 @@ def get_days(session: Session = Depends(get_session)):
     return get_all_days(session)
 
 
-@router.get("time_periods", response_model=list[TimePeriod])
+@router.get("/time_periods", response_model=list[TimePeriod])
 def get_time_periods(session: Session = Depends(get_session)):
     return get_all_time_periods(session)
