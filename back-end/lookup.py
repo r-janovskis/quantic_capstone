@@ -7,12 +7,16 @@ from database.models.language import LanguagePublic
 from database.models.country import CountryPublic
 from database.models.shirt_size import ShirtSizePublic
 from database.models.interest import InterestPublic
+from database.models.day import Day
+from database.models.time_period import TimePeriod
 
 from database.repositories.skill_repo import get_all_skills
 from database.repositories.language_repo import get_all_languages
 from database.repositories.country_repo import get_all_countries
 from database.repositories.shirt_size_repo import get_all_shirt_sizes
 from database.repositories.interest_repo import get_all_interests
+from database.repositories.day_repo import get_all_days
+from database.repositories.time_period_repo import get_all_time_periods
 
 
 
@@ -41,3 +45,13 @@ def get_shirt_sizes(session: Session = Depends(get_session)):
 @router.get("/interests", response_model=list[InterestPublic])
 def get_interests(session: Session = Depends(get_session)):
     return get_all_interests(session)
+
+
+@router.get("/days", response_model=list[Day])
+def get_days(session: Session = Depends(get_session)):
+    return get_all_days(session)
+
+
+@router.get("time_periods", response_model=list[TimePeriod])
+def get_time_periods(session: Session = Depends(get_session)):
+    return get_all_time_periods(session)
