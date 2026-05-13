@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlmodel import Session
-from datetime import date
 from database import get_session
 from dependencies import get_current_user_id
 from schemas.volunteerCreate import VolunteerCreate
