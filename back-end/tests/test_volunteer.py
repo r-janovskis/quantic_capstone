@@ -95,6 +95,68 @@ class TestVolunteerRegistrer:
         assert response.status_code == 422
 
 
+class TestVolunteerUpdate:
+
+    def test_volunteer_update_successful(self, client):
+        # Update some fields in volunteer profile 
+        updated_volunteer = VALID_VOLUNTEER.copy()
+        updated_volunteer["display_name"] = "Updated Name"
+        updated_volunteer["phone"] = "0000000"
+
+        token = get_token(client, "volunteer@example.com")
+        response = client.put(
+            "/volunteer/me", 
+            json=updated_volunteer,
+            headers={"Authorization": f"Bearer {token}"}
+            )
+        assert response.status_code == 200
+        assert response.json()["status"] == "Success"
+
+
+    def test_volunteer_update_with_no_profile(self, client):
+        token = get_token(client, "fake_volunteer@example.com")
+        response = client.put(
+            "/volunteer/me",
+            json=VALID_VOLUNTEER,
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert response.status_code == 404
+
+
+    def test_volunteer_update_with_invalid_token(self, client):
+        response = client.put(
+            "/volunteer/me",
+            json=VALID_VOLUNTEER,
+            headers={"Authorization": f"Bearer INVALID_TOKEN"}
+        )
+        assert response.status_code == 401
+
+    
+    def test_volunteer_update_with_missing_required_field(self, client):
+        token = get_token(client, "volunteer@example.com")
+        updated_volunteer = VALID_VOLUNTEER.copy()
+        updated_volunteer.pop("first_name")
+        response = client.put(
+            "/volunteer/me",
+            json=updated_volunteer,
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert response.status_code == 422
+
+    
+    def test_volunteer_update_with_age_less_than_18(self, client):
+        token = get_token(client, "volunteer@example.com")
+        updated_volunteer = VALID_VOLUNTEER.copy()
+        updated_volunteer["date_of_birth"] = "2020-01-10"
+        response = client.put(
+            "/volunteer/me",
+            json=updated_volunteer,
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert response.status_code == 422
+
+
+
 class TestAvatarUpload:
 
     def test_avatar_upload_success(self, client):
