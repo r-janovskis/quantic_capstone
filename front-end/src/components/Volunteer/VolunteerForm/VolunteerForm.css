@@ -17,14 +17,16 @@ form {
 }
 
 .personal-data,
-.volunteer-motivation {
+.volunteer-motivation-lists {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
 
 .display-info-section,
-.personal-data {
+.personal-data,
+.volunteer-motivation,
+.volunteer-availability {
   padding-bottom: 2rem;
   margin-bottom: 2rem;
   border-bottom: 1px solid black;

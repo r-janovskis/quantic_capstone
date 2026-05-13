@@ -5,6 +5,7 @@ import Alert from "react-bootstrap/Alert";
 
 import MultiSelectField from "../../shared/MultiSelectField/MultiSelectField";
 import AvatarUpload from "../../shared/AvatarUpload/AvatarUpload";
+import SlotList from "../../shared/SlotList/SlotList";
 
 import useLookupData from "../../../hooks/useLookupData";
 import volunteerServices from "../../../services/volunteerAPI";
@@ -169,7 +170,7 @@ function VolunteerForm() {
             </div>
           </div>
         </fieldset>
-        <fieldset className="profile-form">
+        <fieldset className="personal-info-section">
           <h3>Personal Information</h3>
           <div className="personal-data">
             <Form.Group className="entry-volunteer">
@@ -233,8 +234,10 @@ function VolunteerForm() {
               </Form.Select>
             </Form.Group>
           </div>
+        </fieldset>
+        <fieldset className="volunteer-motivation">
           <h3>Getting to know you</h3>
-          <div className="volunteer-motivation">
+          <div className="volunteer-motivation-lists">
             <MultiSelectField
               id="skills"
               label="What skills (previous experiences) do you have?"
@@ -300,8 +303,12 @@ function VolunteerForm() {
               required
             />
           </Form.Group>
-          <Button type="submit">Create Profile</Button>
         </fieldset>
+        <fieldset className="volunteer-availability">
+          <h3>Your availability</h3>
+          <SlotList />
+        </fieldset>
+        <Button type="submit">Create Profile</Button>
       </Form>
       <Alert show={showMessage} variant={messageType}>
         {APIMessage}

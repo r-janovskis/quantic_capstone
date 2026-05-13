@@ -1,0 +1,15 @@
+.slot-list-entry {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+
+.day_picker,
+.time_period_picker {
+  width: 40%;
+}
+
+.add-row {
+  float: right;
+}
