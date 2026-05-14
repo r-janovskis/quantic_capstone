@@ -9,7 +9,7 @@ class VolunteerCreate(VolunteerBase):
     skill_ids: list[int]
     interest_ids: list[int]
     language_ids: list[int]
-    availability: list[Availability]
+    availability: list[Availability] = []
 
     @field_validator("date_of_birth")
     @classmethod

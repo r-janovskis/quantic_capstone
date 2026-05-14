@@ -172,5 +172,6 @@ def seed_time_periods():
             TimePeriod(name="Morning", start_time=time(8, 0), end_time=time(12, 0)),
             TimePeriod(name="Afternoon", start_time=time(13, 0), end_time=time(17, 0)),
             TimePeriod(name="Evening", start_time=time(18, 0), end_time=time(22, 0)),
+            TimePeriod(name="Whole day", start_time=time(8, 0), end_time=time(22, 0)),
         ])
         session.commit()
