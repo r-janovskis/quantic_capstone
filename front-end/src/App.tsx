@@ -8,6 +8,7 @@ import AuthRoot from "./components/Auth/AuthRoot/AuthRoot";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ProfileRoot from "./components/Profile/ProfileRoot/ProfileRoot";
 import ProfileCreate from "./components/Profile/ProfileCreate/ProfileCreate";
+import VolunteerDashboard from "./components/Volunteer/VolunteerDashboard/VolunteerDashboard";
 
 import "./App.css";
 
@@ -24,10 +25,16 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<SignUp />} />
           </Route>
-          <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedRoute requireNoRole />}>
             <Route path="profile" element={<ProfileRoot />}>
               <Route path="create" element={<ProfileCreate />} />
             </Route>
+          </Route>
+          <Route element={<ProtectedRoute requiredRole="volunteer" />}>
+            <Route
+              path="volunteer/dashboard"
+              element={<VolunteerDashboard />}
+            />
           </Route>
         </Route>
       </Routes>
