@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
@@ -17,6 +18,8 @@ import type { VolunteerSlot } from "../VolunteerAvailabilitySlot/VolunteerAvaila
 import "./VolunteerForm.css";
 
 function VolunteerForm() {
+  const navigate = useNavigate();
+
   // Values we use to visualize form field validity
   const [validated, setValidated] = useState(false);
   const [errors, setErrors] = useState({
@@ -134,10 +137,13 @@ function VolunteerForm() {
               setShowMessage(true);
             });
           }
-
-          setMessageType("success");
-          setAPIMessage(response.message);
-          setShowMessage(true);
+          if (response.token) {
+            localStorage.setItem("token", response.token);
+            navigate("/volunteer/dashboard");
+          }
+          // setMessageType("success");
+          // setAPIMessage(response.message);
+          // setShowMessage(true);
         })
         .catch((error) => {
           setMessageType("danger");
