@@ -5,6 +5,10 @@ interface APIResponse {
   message: string;
 }
 
+interface APIRegisterResponse extends APIResponse {
+  token?: string;
+}
+
 interface VolunteerData {
   display_name: string;
   first_name: string;
@@ -27,9 +31,9 @@ const BASE_URL = `${import.meta.env.VITE_API_URL}/volunteer`;
 const register = async (
   volunteer_info: VolunteerData,
   token: string
-): Promise<APIResponse> => {
+): Promise<APIRegisterResponse> => {
   const endpoint = BASE_URL + "/register";
-  const response: AxiosResponse<APIResponse> = await axios.post(
+  const response: AxiosResponse<APIRegisterResponse> = await axios.post(
     endpoint,
     volunteer_info,
     {
