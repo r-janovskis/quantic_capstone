@@ -6,15 +6,19 @@ import Alert from "react-bootstrap/Alert";
 import MultiSelectField from "../../shared/MultiSelectField/MultiSelectField";
 import AvatarUpload from "../../shared/AvatarUpload/AvatarUpload";
 import SlotList from "../../shared/SlotList/SlotList";
+import VolunteerAvailabilitySlot from "../VolunteerAvailabilitySlot/VolunteerAvailabilitySlot";
 
 import useLookupData from "../../../hooks/useLookupData";
 import volunteerServices from "../../../services/volunteerAPI";
 
 import type { Option } from "../../../types";
+import type { VolunteerSlot } from "../VolunteerAvailabilitySlot/VolunteerAvailabilitySlot";
 
 import "./VolunteerForm.css";
 
 function VolunteerForm() {
+  const [selectedSlots, setSelectedSlots] = useState<VolunteerSlot[]>([]);
+
   // Values we use to visualize form field validity
   const [validated, setValidated] = useState(false);
   const [errors, setErrors] = useState({
@@ -32,6 +36,8 @@ function VolunteerForm() {
     countries,
     shirtSizes,
     interests,
+    days,
+    timePeriods,
     loading,
     error,
   } = useLookupData();
@@ -144,6 +150,17 @@ function VolunteerForm() {
         Failed to load data for form. Please refresh the page.
       </Alert>
     );
+
+  const SlotWithOptions = (props: {
+    slot: VolunteerSlot;
+    onChange: (update: VolunteerSlot) => void;
+  }) => (
+    <VolunteerAvailabilitySlot
+      {...props}
+      dayOptions={days}
+      timePeriodOptions={timePeriods}
+    />
+  );
 
   return (
     <>
@@ -306,7 +323,15 @@ function VolunteerForm() {
         </fieldset>
         <fieldset className="volunteer-availability">
           <h3>Your availability</h3>
-          <SlotList />
+          <SlotList
+            SlotComponent={SlotWithOptions}
+            createEmptySlot={(id) => ({
+              id,
+              day_id: null,
+              timePeriod_id: null,
+            })}
+            onChange={setSelectedSlots}
+          />
         </fieldset>
         <Button type="submit">Create Profile</Button>
       </Form>
