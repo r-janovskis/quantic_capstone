@@ -17,8 +17,6 @@ import type { VolunteerSlot } from "../VolunteerAvailabilitySlot/VolunteerAvaila
 import "./VolunteerForm.css";
 
 function VolunteerForm() {
-  const [selectedSlots, setSelectedSlots] = useState<VolunteerSlot[]>([]);
-
   // Values we use to visualize form field validity
   const [validated, setValidated] = useState(false);
   const [errors, setErrors] = useState({
@@ -46,6 +44,8 @@ function VolunteerForm() {
   const [selectedSkills, setSelectedSkills] = useState<Option[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<Option[]>([]);
   const [selectedLanguages, setSelectedLanguages] = useState<Option[]>([]);
+  // Managing selected availability slots
+  const [selectedSlots, setSelectedSlots] = useState<VolunteerSlot[]>([]);
 
   // For displaying messages in case something went wrong while registering volunteer
   const [showMessage, setShowMessage] = useState(false);
@@ -106,6 +106,12 @@ function VolunteerForm() {
         skill_ids: selectedSkills.map((skill) => skill.value),
         interest_ids: selectedInterests.map((interest) => interest.value),
         language_ids: selectedLanguages.map((language) => language.value),
+        availability: selectedSlots
+          .filter((slot) => slot.day_id && slot.timePeriod_id)
+          .map((slot) => ({
+            day_id: slot.day_id,
+            time_period_id: slot.timePeriod_id,
+          })),
       };
 
       const token = localStorage.getItem("token") ?? "";
@@ -143,14 +149,6 @@ function VolunteerForm() {
     setValidated(true);
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error)
-    return (
-      <Alert variant="danger">
-        Failed to load data for form. Please refresh the page.
-      </Alert>
-    );
-
   const SlotWithOptions = (props: {
     slot: VolunteerSlot;
     onChange: (update: VolunteerSlot) => void;
@@ -161,6 +159,14 @@ function VolunteerForm() {
       timePeriodOptions={timePeriods}
     />
   );
+
+  if (loading) return <p>Loading...</p>;
+  if (error)
+    return (
+      <Alert variant="danger">
+        Failed to load data for form. Please refresh the page.
+      </Alert>
+    );
 
   return (
     <>
