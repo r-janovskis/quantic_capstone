@@ -3,13 +3,43 @@ from sqlmodel import Session
 from database import get_session
 from dependencies import get_current_user_id
 from schemas.volunteerCreate import VolunteerCreate
+from schemas.availability import Availability
 from database.models.volunteer import Volunteer
 from database.repositories.volunteer_repo import create_volunteer, update_volunteer, create_volunteer_skills, update_volunteer_skills, create_volunteer_languages, update_volunteer_languages, create_volunteer_interests, update_volunteer_interests, create_volunteer_availability, update_volunteer_availability, get_volunteer_by_user_id, update_volunteer_avatar
+
 from PIL import Image
 import io
 import os
 
 
+# ----------------------------
+# Helper functions
+# ----------------------------
+
+def sanitize_volunteer_availability(availability_slots: list[Availability]) -> list[Availability]:
+    
+    # we remove any duplicate entries 
+    # by saving a copy of volunteer submitted availability as set
+    
+    
+    new_availability = set(availability_slots.copy())
+
+
+    slots_to_remove: list[Availability] = []
+    for entry in new_availability:
+        if entry.time_period_id == 4:
+            for i in range(1, 4):
+                slots_to_remove.append(Availability(day_id=entry.day_id, time_period_id=i))
+
+    # !(entry[""])
+    return [entry for entry in new_availability if entry not in slots_to_remove]
+
+
+
+
+# ----------------------------
+# Route setup + API endpoints
+# ----------------------------
 
 router = APIRouter(prefix="/volunteer", tags=["volunteer"])
 
@@ -37,7 +67,9 @@ def volunteer_register(volunteer: VolunteerCreate, user_id: int = Depends(get_cu
     create_volunteer_skills(session, saved_volunteer.id, volunteer.skill_ids)
     create_volunteer_interests(session, saved_volunteer.id, volunteer.interest_ids)
     create_volunteer_languages(session, saved_volunteer.id, volunteer.language_ids)
-    create_volunteer_availability(session, saved_volunteer.id, volunteer.availability)
+
+    checked_availability = sanitize_volunteer_availability(volunteer.availability)
+    create_volunteer_availability(session, saved_volunteer.id, checked_availability)
 
     return {
         "status": "Success",
