@@ -12,6 +12,8 @@ function useLookupData() {
   const [countries, setCountries] = useState<Option[]>([]);
   const [shirtSizes, setShirtSizes] = useState<Option[]>([]);
   const [interests, setInterests] = useState<Option[]>([]);
+  const [days, setDays] = useState<Option[]>([]);
+  const [timePeriods, setTimePeriods] = useState<Option[]>([]);
 
   useEffect(() => {
     Promise.all([
@@ -20,37 +22,64 @@ function useLookupData() {
       lookupServices.getLanguages(),
       lookupServices.getCountries(),
       lookupServices.getShirtSizes(),
+      lookupServices.getDays(),
+      lookupServices.getTimePeriods(),
     ])
-      .then(([skills, interests, languages, countries, shirtSizes]) => {
-        setSkills(
-          skills.map((skill) => ({ value: skill.id, label: skill.name }))
-        );
-        setInterests(
-          interests.map((interests) => ({
-            value: interests.id,
-            label: interests.name,
-          }))
-        );
-        setLanguages(
-          languages.map((languages) => ({
-            value: languages.id,
-            label: languages.name,
-          }))
-        );
-        setCountries(
-          countries.map((country) => ({
-            value: country.id,
-            label: country.name,
-          }))
-        );
-        setShirtSizes(
-          shirtSizes.map((shirtSize) => ({
-            value: shirtSize.id,
-            label: shirtSize.name,
-          }))
-        );
-        setLoading(false);
-      })
+      .then(
+        ([
+          skills,
+          interests,
+          languages,
+          countries,
+          shirtSizes,
+          days,
+          timePeriods,
+        ]) => {
+          setSkills(
+            skills.map((skill) => ({ value: skill.id, label: skill.name }))
+          );
+          setInterests(
+            interests.map((interests) => ({
+              value: interests.id,
+              label: interests.name,
+            }))
+          );
+          setLanguages(
+            languages.map((languages) => ({
+              value: languages.id,
+              label: languages.name,
+            }))
+          );
+          setCountries(
+            countries.map((country) => ({
+              value: country.id,
+              label: country.name,
+            }))
+          );
+          setShirtSizes(
+            shirtSizes.map((shirtSize) => ({
+              value: shirtSize.id,
+              label: shirtSize.name,
+            }))
+          );
+          setDays([
+            ...days.map((day) => ({
+              value: day.id,
+              label: day.name,
+            })),
+            { value: 8, label: "Working days" },
+            { value: 9, label: "Weekend" },
+          ]);
+          setTimePeriods([
+            ...timePeriods.map((timePeriod) => ({
+              value: timePeriod.id,
+              label: timePeriod.name,
+            })),
+            { value: 4, label: "Whole day" },
+          ]);
+          setLoading(false);
+        }
+      )
       .catch(() => {
         setError(true);
         setLoading(false);
@@ -62,6 +91,8 @@ function useLookupData() {
     languages,
     countries,
     shirtSizes,
+    days,
+    timePeriods,
     loading,
     error,
   };
