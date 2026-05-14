@@ -4,6 +4,7 @@ from security import create_token, verify_token
 from database import get_session
 from database.models.user import UserBase
 from database.repositories.user_repo import get_user_by_email, create_user, update_last_login
+from database.repositories.volunteer_repo import get_volunteer_by_user_id
 from pydantic import field_validator
 import bcrypt
 import re
@@ -74,7 +75,12 @@ def login(payload: LoginRequest, session: Session = Depends(get_session)):
         valid_user = False
 
     # Token generated here as we would like to make time attacks harder to execute
-    token = create_token(user_id)
+    # token = create_token(user_id)
+    role = None
+    if valid_user:
+        if get_volunteer_by_user_id(session, user_id):
+            role = "volunteer"
+    token = create_token(user_id=user_id, role=role)
 
     if not valid_user:
         return {
