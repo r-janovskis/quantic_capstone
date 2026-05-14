@@ -45,12 +45,28 @@ const getInterests = async (): Promise<LookupResponse[]> => {
   return response.data;
 };
 
+const getDays = async (): Promise<LookupResponse[]> => {
+  const endpoint = BASE_URL + "/days";
+  const response: AxiosResponse<LookupResponse[]> = await axios.get(endpoint);
+
+  return response.data;
+};
+
+const getTimePeriods = async (): Promise<LookupResponse[]> => {
+  const endpoint = BASE_URL + "/time_periods";
+  const response: AxiosResponse<LookupResponse[]> = await axios.get(endpoint);
+
+  return response.data;
+};
+
 const lookupServices = {
   getSkills,
   getLanguages,
   getCountries,
   getShirtSizes,
   getInterests,
+  getDays,
+  getTimePeriods,
 };
 
 export default lookupServices;
