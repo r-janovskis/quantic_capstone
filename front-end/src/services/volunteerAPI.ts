@@ -18,6 +18,7 @@ interface VolunteerData {
   skill_ids: number[];
   interest_ids: number[];
   language_ids: number[];
+  availability: { day_id: number; time_period_id: number }[];
 }
 
 // BASE_URL => "http://localhost:8000/volunteer";

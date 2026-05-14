@@ -67,15 +67,12 @@ function useLookupData() {
               value: day.id,
               label: day.name,
             })),
-            { value: 8, label: "Working days" },
-            { value: 9, label: "Weekend" },
           ]);
           setTimePeriods([
             ...timePeriods.map((timePeriod) => ({
               value: timePeriod.id,
               label: timePeriod.name,
             })),
-            { value: 4, label: "Whole day" },
           ]);
           setLoading(false);
         }
