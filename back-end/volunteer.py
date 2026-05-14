@@ -6,6 +6,7 @@ from schemas.volunteerCreate import VolunteerCreate
 from schemas.availability import Availability
 from database.models.volunteer import Volunteer
 from database.repositories.volunteer_repo import create_volunteer, update_volunteer, create_volunteer_skills, update_volunteer_skills, create_volunteer_languages, update_volunteer_languages, create_volunteer_interests, update_volunteer_interests, create_volunteer_availability, update_volunteer_availability, get_volunteer_by_user_id, update_volunteer_avatar
+from database.repositories.user_repo import update_status
 
 from PIL import Image
 import io
@@ -70,6 +71,9 @@ def volunteer_register(volunteer: VolunteerCreate, user_id: int = Depends(get_cu
 
     checked_availability = sanitize_volunteer_availability(volunteer.availability)
     create_volunteer_availability(session, saved_volunteer.id, checked_availability)
+    
+    # Update the status for user
+    update_status(session, user_id, 2)
 
     return {
         "status": "Success",

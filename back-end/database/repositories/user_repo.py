@@ -23,3 +23,13 @@ def update_last_login(session: Session, user_id: int) -> User:
     session.commit()
     session.refresh(user)
     return user
+
+def update_status(session: Session, user_id: int, status: int) -> User:
+    statement = select(User).where(User.id == user_id)
+    user = session.exec(statement).first()
+    if not user:
+        raise ValueError(f"User with id {user_id} not found")
+    user.status = status
+    session.commit()
+    session.refresh(user)
+    return user
