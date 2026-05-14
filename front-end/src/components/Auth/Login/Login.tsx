@@ -34,16 +34,13 @@ function Login() {
         .login(email.value, password.value)
         .then((response) => {
           if (response.status === "Success") {
-            setMessageType("success");
-            setAPIMessage(
-              `Message: ${response.message}\nToken: ${response.token}\nUser status: ${response.user_status}`
-            );
             // Set the token in local storage so we get access to protected routes later
             localStorage.setItem("token", response.token);
+            navigate("/profile/create");
             // Based on user type (volunteer or organisation) we direct them to the correct route
-            if (response.user_status === 1) {
-              navigate("/profile/create");
-            }
+            // if (response.user_status === 1) {
+
+            // }
           } else if (response.status === "Error") {
             setMessageType("danger");
             setAPIMessage(`Message: ${response.message}`);
