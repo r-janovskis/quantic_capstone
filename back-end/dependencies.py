@@ -1,4 +1,4 @@
-from fastapi import Header, Depends
+from fastapi import Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from security import verify_token
 
