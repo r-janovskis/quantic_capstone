@@ -1,11 +1,9 @@
-from database.models.volunteer import VolunteerBase
+from database.models.volunteer import VolunteerPublic
 from schemas.availability import Availability
 from pydantic import field_validator
 from datetime import date
 
-class VolunteerCreate(VolunteerBase):
-    country_id: int
-    shirt_size_id: int
+class VolunteerCreate(VolunteerPublic):
     skill_ids: list[int]
     interest_ids: list[int]
     language_ids: list[int]
