@@ -21,6 +21,5 @@ class Volunteer(VolunteerBase, table=True):
     shirt_size_id: int = Field(foreign_key="shirt_sizes.id")
 
 class VolunteerPublic(VolunteerBase):
-    id: int
     country_id: int
     shirt_size_id: int
