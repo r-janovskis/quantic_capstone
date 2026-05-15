@@ -8,7 +8,7 @@ from database.models.volunteer_availability import VolunteerAvailability
 
 
 # -------------------------------------------------------
-#   Creatre, update and other calls for table: volunteers
+#   Actions for table: volunteers
 # -------------------------------------------------------
 
 def create_volunteer(session: Session, volunteer: Volunteer) -> Volunteer:
@@ -39,7 +39,7 @@ def update_volunteer_avatar(session: Session, volunteer: Volunteer, avatar_url: 
     session.commit()
 
 # ----------------------------------------------------
-#   Creatre and update for table: volunteers_skills
+#   Actions for table: volunteers_skills
 # ----------------------------------------------------
 
 def create_volunteer_skills(session: Session, volunteer_id: int, skill_ids: list[int]) -> None:
@@ -58,8 +58,12 @@ def update_volunteer_skills(session: Session, volunteer_id: int, skill_ids: list
     ])
     session.commit()
 
+def get_volunteer_skills_id(session: Session, volunteer_id: int) -> list[int]:
+    statement = select(VolunteerSkill.skill_id).where(VolunteerSkill.volunteer_id == volunteer_id)
+    return list(session.exec(statement).all())
+
 # ----------------------------------------------------
-#   Creatre and update for table: volunteers_interests
+#   Actions for table: volunteers_interests
 # ----------------------------------------------------
 
 def create_volunteer_interests(session: Session, volunteer_id: int, interest_ids: list[int]) -> None:
@@ -77,8 +81,12 @@ def update_volunteer_interests(session: Session, volunteer_id: int, interest_ids
         for interest_id in interest_ids
     ])
 
+def get_volunteer_interests_ids(session: Session, volunteer_id: int) -> list[int]:
+    statement = select(VolunteerInterest.interest_id).where(VolunteerInterest.volunteer_id == volunteer_id)
+    return list(session.exec(statement).all())
+
 # ----------------------------------------------------
-#   Creatre and update for table: volunteers_languages
+#   Actions for table: volunteers_languages
 # ----------------------------------------------------
 
 def create_volunteer_languages(session: Session, volunteer_id: int, language_ids: list[int]) -> None:
@@ -96,8 +104,12 @@ def update_volunteer_languages(session: Session, volunteer_id: int, language_ids
         for language_id in language_ids
     ])
 
+def get_volunteer_languages_ids(session: Session, volunteer_id: int) -> list[int]:
+    statement = select(VolunteerLanguage.language_id).where(VolunteerLanguage.volunteer_id == volunteer_id)
+    return list(session.exec(statement).all())
+
 # -------------------------------------------------------
-#   Creatre and update for table: volunteers_availability
+#   Actions for table: volunteers_availability
 # -------------------------------------------------------
 
 def create_volunteer_availability(session: Session, volunteer_id: int, availability: list[Availability]) -> None:
@@ -115,10 +127,11 @@ def update_volunteer_availability(session: Session, volunteer_id: int, availabil
         for availability_slot in availability
     ])
 
-
-
-
-
-
-
-    
+def get_volunteer_availability(session: Session, volunteer_id: int) -> list[Availability]:
+    statement = select(VolunteerAvailability.day_id, VolunteerAvailability.time_period_id).where(VolunteerAvailability.volunteer_id == volunteer_id)
+    # We will receive a list of tuples, where each tuple is [day_id, time_period_id]
+    availability_entries = session.exec(statement).all()
+    return [
+        Availability(day_id=day_id, time_period_id=time_period_id)
+        for day_id, time_period_id in availability_entries
+    ]
