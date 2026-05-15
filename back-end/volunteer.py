@@ -4,6 +4,7 @@ from database import get_session
 from dependencies import get_current_user_id
 from schemas.volunteerCreate import VolunteerCreate
 from schemas.availability import Availability
+from schemas.roles import Role
 from database.models.volunteer import Volunteer
 from database.repositories.volunteer_repo import create_volunteer, update_volunteer, create_volunteer_skills, update_volunteer_skills, create_volunteer_languages, update_volunteer_languages, create_volunteer_interests, update_volunteer_interests, create_volunteer_availability, update_volunteer_availability, get_volunteer_by_user_id, update_volunteer_avatar
 from database.repositories.user_repo import update_status
@@ -77,7 +78,7 @@ def volunteer_register(volunteer: VolunteerCreate, user_id: int = Depends(get_cu
     update_status(session, user_id, 2)
 
     # Generate new token to include role
-    new_token = create_token(user_id=user_id, role="volunteer")
+    new_token = create_token(user_id=user_id, role=Role.VOLUNTEER)
 
     return {
         "status": "Success",
