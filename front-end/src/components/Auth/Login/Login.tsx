@@ -5,6 +5,8 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 import authServices from "../../../services/authAPI";
+import { getRoleHomePath } from "../../../utils/roles";
+import { getTokenRole } from "../../../utils/token";
 
 import "./Login.css";
 
@@ -36,7 +38,7 @@ function Login() {
           if (response.status === "Success") {
             // Set the token in local storage so we get access to protected routes later
             localStorage.setItem("token", response.token);
-            navigate("/profile/create");
+            navigate(getRoleHomePath(getTokenRole(response.token)));
             // Based on user type (volunteer or organisation) we direct them to the correct route
             // if (response.user_status === 1) {
 

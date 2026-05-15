@@ -1,5 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
+import { ROLES } from "./constants/roles";
+
 import Root from "./components/Root/Root";
 import Home from "./components/Home/Home";
 import Login from "./components/Auth/Login/Login";
@@ -25,12 +27,12 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<SignUp />} />
           </Route>
-          <Route element={<ProtectedRoute requireNoRole />}>
+          <Route element={<ProtectedRoute requiredRole={ROLES.NEW_USER} />}>
             <Route path="profile" element={<ProfileRoot />}>
               <Route path="create" element={<ProfileCreate />} />
             </Route>
           </Route>
-          <Route element={<ProtectedRoute requiredRole="volunteer" />}>
+          <Route element={<ProtectedRoute requiredRole={ROLES.VOLUNTEER} />}>
             <Route
               path="volunteer/dashboard"
               element={<VolunteerDashboard />}
