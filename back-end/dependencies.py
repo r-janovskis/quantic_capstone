@@ -1,10 +1,13 @@
-from fastapi import Header
+from fastapi import Header, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from security import verify_token
 
-def get_current_user_id(authorization: str = Header()) -> int:
+
+bearer_schema = HTTPBearer()
+
+def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(bearer_schema)) -> int:
     """
     Retrieves user_id from the authorization header
     """
-    token = authorization.removeprefix("Bearer ")
-    payload = verify_token(token)
+    payload = verify_token(credentials.credentials)
     return int(payload["sub"])
