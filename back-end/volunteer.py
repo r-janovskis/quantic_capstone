@@ -1,18 +1,35 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlmodel import Session
-from database import get_session
-from dependencies import get_current_user_id
-from schemas.volunteerCreate import VolunteerCreate
-from schemas.availability import Availability
-from schemas.roles import Role
-from database.models.volunteer import Volunteer
-from database.repositories.volunteer_repo import create_volunteer, update_volunteer, create_volunteer_skills, update_volunteer_skills, create_volunteer_languages, update_volunteer_languages, create_volunteer_interests, update_volunteer_interests, create_volunteer_availability, update_volunteer_availability, get_volunteer_by_user_id, update_volunteer_avatar
-from database.repositories.user_repo import update_status
-from security import create_token
-
 from PIL import Image
 import io
 import os
+from security import create_token
+from database import get_session
+from dependencies import get_current_user_id
+from schemas.volunteerCreate import VolunteerCreate
+from schemas.volunteerProfile import VolunteerProfile
+from schemas.availability import Availability
+from schemas.roles import Role
+from database.models.volunteer import Volunteer
+from database.repositories.user_repo import update_status
+from database.repositories.volunteer_repo import (
+    create_volunteer, 
+    update_volunteer, 
+    create_volunteer_skills, 
+    create_volunteer_languages,
+    create_volunteer_interests,
+    create_volunteer_availability,
+    update_volunteer_skills,  
+    update_volunteer_languages, 
+    update_volunteer_interests, 
+    update_volunteer_availability, 
+    update_volunteer_avatar,
+    get_volunteer_by_user_id,
+    get_volunteer_skills_id,
+    get_volunteer_interests_ids,
+    get_volunteer_languages_ids,
+    get_volunteer_availability
+)
 
 
 # ----------------------------
@@ -34,17 +51,15 @@ def sanitize_volunteer_availability(availability_slots: list[Availability]) -> l
             for i in range(1, 4):
                 slots_to_remove.append(Availability(day_id=entry.day_id, time_period_id=i))
 
-    # !(entry[""])
     return [entry for entry in new_availability if entry not in slots_to_remove]
 
 
 
-
-# ----------------------------
-# Route setup + API endpoints
-# ----------------------------
-
 router = APIRouter(prefix="/volunteer", tags=["volunteer"])
+
+# ---------------------------------
+# API endpoint: /volunteer/register
+# ---------------------------------
 
 @router.post("/register", response_model=dict[str, str])
 def volunteer_register(volunteer: VolunteerCreate, user_id: int = Depends(get_current_user_id), session: Session = Depends(get_session)):
@@ -86,6 +101,29 @@ def volunteer_register(volunteer: VolunteerCreate, user_id: int = Depends(get_cu
         "token": new_token,
     }
 
+# ----------------------------
+# API endpoint: /volunteer/me
+# ----------------------------
+
+@router.get("/me", response_model=VolunteerProfile)
+def volunteer_me(user_id: int = Depends(get_current_user_id), session: Session = Depends(get_session)):
+    volunteer = get_volunteer_by_user_id(session, user_id)
+    if not volunteer:
+        raise HTTPException(status_code=404, detail="Volunteer profile not found")
+    if volunteer.id is None:
+        raise HTTPException(status_code=500, detail="Something went wrong, please try again later")
+    
+    volunteer_skill_ids = get_volunteer_skills_id(session, volunteer.id)
+    volunteer_interests_ids = get_volunteer_interests_ids(session, volunteer.id)
+    volunteer_languages_ids = get_volunteer_languages_ids(session, volunteer.id)
+    volunteer_availability = get_volunteer_availability(session, volunteer.id)
+    return VolunteerProfile(
+        **volunteer.model_dump(),
+        skill_ids=volunteer_skill_ids,
+        interest_ids=volunteer_interests_ids,
+        language_ids=volunteer_languages_ids,
+        availability=volunteer_availability
+    )
 
 @router.put("/me", response_model=dict[str, str])
 def volunteer_update(volunteer: VolunteerCreate, user_id: int = Depends(get_current_user_id), session: Session = Depends(get_session)):
@@ -116,6 +154,11 @@ def volunteer_update(volunteer: VolunteerCreate, user_id: int = Depends(get_curr
         "message": "Volunteer updated successfully!"
     }
 
+
+
+# -------------------------------
+# API endpoint: /volunteer/avatar
+# -------------------------------
 
 @router.post("/avatar", response_model=dict[str, str])
 def volunteer_avatar(file: UploadFile = File(...), user_id: int = Depends(get_current_user_id), session: Session = Depends(get_session)):
