@@ -6,10 +6,17 @@ import "./AvatarUpload.css";
 interface Props {
   name?: string;
   label?: string;
+  currentAvatar?: string | null;
 }
 
-function AvatarUpload({ name = "avatar", label = "Profile Picture" }: Props) {
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+function AvatarUpload({
+  name = "avatar",
+  label = "Profile Picture",
+  currentAvatar = null,
+}: Props) {
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(
+    currentAvatar
+  );
   const [avatarFeedback, setAvatarFeedback] = useState("");
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
