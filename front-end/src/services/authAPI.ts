@@ -4,7 +4,6 @@ interface AuthResponse {
   status: string;
   message: string;
   token?: string;
-  user_status?: number;
 }
 
 interface TokenVerificationResponse {

@@ -6,7 +6,7 @@ interface APIResponse {
 }
 
 interface APIRegisterResponse extends APIResponse {
-  token?: string;
+  token: string;
 }
 
 interface VolunteerData {
