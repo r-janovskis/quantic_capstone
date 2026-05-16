@@ -51,7 +51,9 @@ function SlotList<T extends { id: number }>({
   useEffect(() => {
     // We want one row to be rendered when we load the page
     // So we add handleAddRowClick on loadup
-    handleAddRowClick();
+    if (!initialSlots || initialSlots.length === 0) {
+      handleAddRowClick();
+    }
   }, []);
 
   return (
