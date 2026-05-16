@@ -14,8 +14,8 @@ class TestSignup:
             "email": "test@example.com",
             "password": "Password123!"
         })
-        assert response.status_code == 200
-        assert response.json()["status"] == "Error"
+        assert response.status_code == 409
+        assert response.json()["detail"] == "This email is already in use!"
 
 
 class TestLogin:
@@ -36,8 +36,8 @@ class TestLogin:
             "email": "test_unknown@example.com",
             "password": "Password123!"
         })
-        assert response.status_code == 200
-        assert response.json()["status"] == "Error"
+        assert response.status_code == 401
+        assert response.json()["detail"] == "Incorrect email or password"
 
 
 class TestVerify:
