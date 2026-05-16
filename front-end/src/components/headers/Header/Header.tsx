@@ -7,6 +7,7 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import volunteerServices from "../../../services/volunteerAPI";
 import { getTokenRole } from "../../../utils/token";
 import { ROLES } from "../../../constants/roles";
+import { useHeaderRefresh } from "../../../context/HeaderContext";
 
 import "./Header.css";
 
@@ -15,6 +16,8 @@ function Header() {
     name: string;
     avatar_url?: string;
   } | null>(null);
+
+  const { refreshKey } = useHeaderRefresh();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -39,7 +42,7 @@ function Header() {
     }
     // When we have organisers set up we will have another if or expanded
     // if/else block to handle organisers
-  }, []);
+  }, [refreshKey]);
 
   return (
     <header>
