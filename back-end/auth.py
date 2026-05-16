@@ -51,7 +51,10 @@ def signup(payload: UserRequest, session: Session = Depends(get_session)):
     hashed_password = bcrypt.hashpw(payload.password.encode("utf-8"), bcrypt.gensalt())
 
     create_user(session, payload.email, hashed_password)
-    return {"status": "Success", "message": 'You have successfully signed up! Head to the login page to continue setting up account.'}
+    return {
+        "status": "Success", 
+        "message": 'You have successfully signed up! Head to the login page to continue setting up account.'
+    }
 
 
 @router.post("/login", response_model=dict[str, str | int])
