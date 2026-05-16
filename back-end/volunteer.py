@@ -109,6 +109,12 @@ def volunteer_me(user_id: int = Depends(get_current_user_id), session: Session =
     volunteer_interests_ids = get_volunteer_interests_ids(session, volunteer.id)
     volunteer_languages_ids = get_volunteer_languages_ids(session, volunteer.id)
     volunteer_availability = get_volunteer_availability(session, volunteer.id)
+
+    # In case there is avatar URL image we need to pre-process it
+    # Otherwise front-end wont be able to construct correct URL
+    if volunteer.avatar_url:
+        volunteer.avatar_url = volunteer.avatar_url.replace("../", "/")
+
     return VolunteerProfile(
         **volunteer.model_dump(),
         skill_ids=volunteer_skill_ids,
