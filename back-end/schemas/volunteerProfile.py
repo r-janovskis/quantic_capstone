@@ -1,8 +1,11 @@
 from database.models.volunteer import VolunteerPublic
+from database.models.skill import SkillPublic
+from database.models.interest import InterestPublic
+from database.models.language import LanguagePublic
 from schemas.availability import Availability
 
 class VolunteerProfile(VolunteerPublic):
-    skill_ids: list[int]
-    interest_ids: list[int]
-    language_ids: list[int]
+    skills: list[SkillPublic]
+    interests: list[InterestPublic]
+    languages: list[LanguagePublic]
     availability: list[Availability]
