@@ -4,7 +4,6 @@ from sqlmodel import Session, create_engine, SQLModel
 
 # All the table imports are needed to make sure they aare created in DB
 # And created in the right order
-from database.models.status import Status # noqa: F401
 from database.models.user import User # noqa: F401
 from database.models.skill import Skill # noqa: F401
 from database.models.language import Language # noqa: F401

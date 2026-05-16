@@ -14,7 +14,6 @@ import volunteer
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     database.create_db_and_tables()
-    database.seeds.seed_statuses()
     database.seeds.seed_skills()
     database.seeds.seed_languages()
     database.seeds.seed_countries()

@@ -2,7 +2,6 @@ import pytest
 from datetime import time
 from fastapi.testclient import TestClient
 from sqlmodel import SQLModel, create_engine, Session
-from database.models.status import Status
 from database.models.user import User # noqa: F401
 from database.models.skill import Skill 
 from database.models.country import Country
@@ -31,7 +30,6 @@ def setup_database():
     SQLModel.metadata.create_all(test_engine)
     with Session(test_engine) as session:
         session.add_all([
-            Status(name="New"), Status(name="Active"),
             Country(name="Ireland"), 
             ShirtSize(name="M"), 
             Skill(name="Driving"),

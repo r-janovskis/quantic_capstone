@@ -3,7 +3,6 @@ from database import engine
 from datetime import time
 
 # Import tables that we are seeding values for
-from database.models.status import Status
 from database.models.skill import Skill
 from database.models.language import Language
 from database.models.country import Country
@@ -15,21 +14,6 @@ from database.models.time_period import TimePeriod
 
 # Functions to seed tables with values
 # These are pre-defined values we use in our forms in front-end
-
-def seed_statuses():
-
-    with Session(engine) as session:
-        # Check if populated table already exists
-        if session.exec(select(Status)).first():
-            return
-        session.add_all([
-            Status(name="New"),
-            Status(name="Active"),
-            Status(name="Inactive"),
-            Status(name="Locked")
-        ])
-        session.commit()
-
 def seed_skills():
 
     with Session(engine) as session:
