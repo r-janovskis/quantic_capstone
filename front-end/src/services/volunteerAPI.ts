@@ -25,6 +25,10 @@ interface VolunteerData {
   availability: { day_id: number; time_period_id: number }[];
 }
 
+interface APIVolunteerResponse extends VolunteerData {
+  avatar_url: string | null;
+}
+
 // BASE_URL => "http://localhost:8000/volunteer";
 const BASE_URL = `${import.meta.env.VITE_API_URL}/volunteer`;
 
@@ -66,6 +70,24 @@ const uploadAvatar = async (
   return response.data;
 };
 
-const volunteerServices = { register, uploadAvatar };
+const getProfile = async (token: string): Promise<APIVolunteerResponse> => {
+  const endpoint = BASE_URL + "/me";
+  const response = await axios.get(endpoint, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const volunteerData = response.data;
+  if (volunteerData.avatar_url) {
+    volunteerData.avatar_url = `${import.meta.env.VITE_API_URL}${
+      volunteerData.avatar_url
+    }`;
+  }
+
+  return volunteerData;
+};
+
+const volunteerServices = { register, uploadAvatar, getProfile };
 
 export default volunteerServices;
