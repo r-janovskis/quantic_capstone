@@ -1,0 +1,47 @@
+form {
+  width: 70%;
+  margin: 0 auto;
+}
+
+.display-info-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+  align-items: flex-start;
+  margin-top: 2rem;
+}
+
+.display-name-section {
+  flex: 1;
+  padding-top: 0.5rem;
+}
+
+.personal-data,
+.volunteer-motivation-lists {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.display-info-section,
+.personal-data,
+.volunteer-motivation,
+.volunteer-availability {
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid black;
+}
+
+.entry-volunteer {
+  margin: 1rem 0;
+  width: 45%;
+}
+
+.bio-volunteer {
+  margin: 1rem 0;
+  width: 100%;
+}
+
+.registration-form {
+  margin: 2rem auto;
+}
