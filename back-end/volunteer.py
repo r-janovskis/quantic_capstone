@@ -11,6 +11,9 @@ from schemas.volunteerProfile import VolunteerProfile
 from schemas.availability import Availability
 from schemas.roles import Role
 from database.models.volunteer import Volunteer
+from database.repositories.skill_repo import get_selected_skills
+from database.repositories.interest_repo import get_selected_interests
+from database.repositories.language_repo import get_selected_languages
 from database.repositories.volunteer_repo import (
     create_volunteer, 
     update_volunteer, 
@@ -117,9 +120,9 @@ def volunteer_me(user_id: int = Depends(get_current_user_id), session: Session =
 
     return VolunteerProfile(
         **volunteer.model_dump(),
-        skill_ids=volunteer_skill_ids,
-        interest_ids=volunteer_interests_ids,
-        language_ids=volunteer_languages_ids,
+        skills=get_selected_skills(session, volunteer_skill_ids),
+        interests=get_selected_interests(session, volunteer_interests_ids),
+        languages=get_selected_languages(session, volunteer_languages_ids),
         availability=volunteer_availability
     )
 
@@ -131,7 +134,7 @@ def volunteer_update(volunteer: VolunteerCreate, user_id: int = Depends(get_curr
         raise HTTPException(status_code=404, detail="Volunteer profile not found")
     
     # Extracting data from volunteer object that was submitted
-    volunteer_data = volunteer.model_dump(exclude={"skill_ids", "interest_ids", "language_ids", "availability"})
+    volunteer_data = volunteer.model_dump(exclude={"skill_ids", "interest_ids", "language_ids", "availability", "avatar_url"})
     # Updating existing vlunteer with the new values
     for key, value in volunteer_data.items():
         setattr(existing_volunteer, key, value)
