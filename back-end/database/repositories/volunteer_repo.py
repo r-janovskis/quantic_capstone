@@ -80,6 +80,7 @@ def update_volunteer_interests(session: Session, volunteer_id: int, interest_ids
         VolunteerInterest(volunteer_id=volunteer_id, interest_id=interest_id)
         for interest_id in interest_ids
     ])
+    session.commit()
 
 def get_volunteer_interests_ids(session: Session, volunteer_id: int) -> list[int]:
     statement = select(VolunteerInterest.interest_id).where(VolunteerInterest.volunteer_id == volunteer_id)
@@ -103,6 +104,7 @@ def update_volunteer_languages(session: Session, volunteer_id: int, language_ids
         VolunteerLanguage(volunteer_id=volunteer_id, language_id=language_id)
         for language_id in language_ids
     ])
+    session.commit()
 
 def get_volunteer_languages_ids(session: Session, volunteer_id: int) -> list[int]:
     statement = select(VolunteerLanguage.language_id).where(VolunteerLanguage.volunteer_id == volunteer_id)
@@ -126,7 +128,8 @@ def update_volunteer_availability(session: Session, volunteer_id: int, availabil
         VolunteerAvailability(volunteer_id=volunteer_id, day_id=availability_slot.day_id, time_period_id=availability_slot.time_period_id)
         for availability_slot in availability
     ])
-
+    session.commit()
+    
 def get_volunteer_availability(session: Session, volunteer_id: int) -> list[Availability]:
     statement = select(VolunteerAvailability.day_id, VolunteerAvailability.time_period_id).where(VolunteerAvailability.volunteer_id == volunteer_id)
     # We will receive a list of tuples, where each tuple is [day_id, time_period_id]
