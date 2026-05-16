@@ -53,7 +53,7 @@ function VolunteerForm() {
   // For displaying messages in case something went wrong while registering volunteer
   const [showMessage, setShowMessage] = useState(false);
   const [messageType, setMessageType] = useState("");
-  const [APIMessage, setAPIMessage] = useState("");
+  const [APIMessage, setAPIMessage] = useState({ status: "", message: "" });
 
   const handleVolunteerFormSubmit = (
     event: React.SubmitEvent<HTMLFormElement>
@@ -90,10 +90,6 @@ function VolunteerForm() {
 
     // Do custom form validation
     if (form.checkValidity() && !Object.values(hasErrors).some(Boolean)) {
-      // This is were we submit registration form
-      // and all going well lead user to the next pages...
-      //alert("All checked and valid!");
-
       // Let's get form data and create volunteer object that we will send to API endpoint
       const formData = new FormData(form);
       const volunteerData = {
@@ -121,19 +117,15 @@ function VolunteerForm() {
       volunteerServices
         .register(volunteerData, token)
         .then((response) => {
-          if (response.status === "Error") {
-            setMessageType("danger");
-            setAPIMessage(response.message);
-            setShowMessage(true);
-            return;
-          }
-
           // Check if we need to upload avatar image too
           const avatarFile = formData.get("avatar") as File | null;
           if (avatarFile && avatarFile.size > 0) {
             volunteerServices.uploadAvatar(avatarFile, token).catch(() => {
               setMessageType("warning");
-              setAPIMessage("Profile created, but avatar upload failed.");
+              setAPIMessage({
+                status: response.status,
+                message: response.message,
+              });
               setShowMessage(true);
             });
           }
@@ -141,13 +133,13 @@ function VolunteerForm() {
             localStorage.setItem("token", response.token);
             navigate("/volunteer/dashboard");
           }
-          // setMessageType("success");
-          // setAPIMessage(response.message);
-          // setShowMessage(true);
         })
         .catch((error) => {
           setMessageType("danger");
-          setAPIMessage(error.message);
+          setAPIMessage({
+            status: error.response.status,
+            message: error.response.data.detail,
+          });
           setShowMessage(true);
         });
     }
@@ -348,7 +340,8 @@ function VolunteerForm() {
         <Button type="submit">Create Profile</Button>
       </Form>
       <Alert show={showMessage} variant={messageType}>
-        {APIMessage}
+        <p>Status code: {APIMessage.status}</p>
+        <p>Message: {APIMessage.message}</p>
       </Alert>
     </>
   );

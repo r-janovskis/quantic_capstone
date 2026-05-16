@@ -15,7 +15,7 @@ function Login() {
 
   const [showMessage, setShowMessage] = useState(false);
   const [messageType, setMessageType] = useState("");
-  const [APIMessage, setAPIMessage] = useState("");
+  const [APIMessage, setAPIMessage] = useState({ status: "", message: "" });
 
   const navigate = useNavigate();
 
@@ -35,27 +35,19 @@ function Login() {
       authServices
         .login(email.value, password.value)
         .then((response) => {
-          if (response.status === "Success") {
-            // Set the token in local storage so we get access to protected routes later
-            localStorage.setItem("token", response.token);
-            navigate(getRoleHomePath(getTokenRole(response.token)));
-            // Based on user type (volunteer or organisation) we direct them to the correct route
-            // if (response.user_status === 1) {
-
-            // }
-          } else if (response.status === "Error") {
-            setMessageType("danger");
-            setAPIMessage(`Message: ${response.message}`);
-
-            email.setCustomValidity(response.message);
-            password.setCustomValidity(response.message);
-          }
+          // Set the token in local storage so we get access to protected routes later
+          localStorage.setItem("token", response.token);
+          // Based on the role in token user will be navigated to their correct page
+          navigate(getRoleHomePath(getTokenRole(response.token)));
         })
-        .catch(() => {
+        .catch((error) => {
           setMessageType("danger");
-          setAPIMessage("Something went wrong! Please try again later.");
+          setAPIMessage({
+            status: error.response.status,
+            message: error.response.data.detail,
+          });
+          setShowMessage(true);
         });
-      setShowMessage(true);
     }
 
     setValidated(true);
@@ -97,7 +89,8 @@ function Login() {
           </Button>
         </Form>
         <Alert show={showMessage} variant={messageType}>
-          {APIMessage}
+          <p>Status code: {APIMessage.status}</p>
+          <p>Message: {APIMessage.message}</p>
         </Alert>
       </section>
       <section className="link-to-signup">

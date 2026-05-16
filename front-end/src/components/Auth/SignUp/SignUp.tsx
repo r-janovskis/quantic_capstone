@@ -20,7 +20,7 @@ function SignUp() {
 
   const [showMessage, setShowMessage] = useState(false);
   const [messageType, setMessageType] = useState("");
-  const [APIMessage, setAPIMessage] = useState("");
+  const [APIMessage, setAPIMessage] = useState({ status: "", message: "" });
 
   const navigate = useNavigate();
 
@@ -96,27 +96,26 @@ function SignUp() {
       authServices
         .signUp(email.value, password.value)
         .then((response) => {
-          if (response.status === "Success") {
-            setShowMessage(true);
-            setMessageType("success");
-            setAPIMessage(response.message);
-            setTimeout(() => navigate("/auth/login"), 2000);
-
-            // Scenario where email address is already in use...
-          } else {
-            setShowMessage(true);
-            setMessageType("danger");
-            setAPIMessage(response.message);
-            email.setCustomValidity(response.message);
-            // alert(`Status: ${response.status}\nMessage: ${response.message}`);
-          }
+          setMessageType("success");
+          setAPIMessage({
+            status: response.status,
+            message: response.message,
+          });
+          setShowMessage(true);
+          setTimeout(() => navigate("/auth/login"), 2000);
         })
         // Handle errors where we don't even reach the server
         // or don't get the response
-        .catch(() => {
-          setShowMessage(true);
+        .catch((error) => {
           setMessageType("danger");
-          setAPIMessage("Couldn not reach the server. Please try again later.");
+          setAPIMessage({
+            status: error.response.status,
+            message: error.response.data.detail,
+          });
+          setShowMessage(true);
+          if (error.response.status === 409) {
+            email.setCustomValidity(error.response.data.detail);
+          }
         });
     }
   };
@@ -191,7 +190,8 @@ function SignUp() {
         </Button>
       </Form>
       <Alert show={showMessage} variant={messageType}>
-        {APIMessage}
+        <p>Status code: {APIMessage.status}</p>
+        <p>Message: {APIMessage.message}</p>
       </Alert>
       <section className="link-to-login">
         <p>Already have an account?</p>
