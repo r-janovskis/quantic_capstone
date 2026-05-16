@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Header
+from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlmodel import Session
 from security import create_token, verify_token
 from database import get_session
@@ -46,7 +46,7 @@ def signup(payload: UserRequest, session: Session = Depends(get_session)):
     user_from_db = get_user_by_email(session, payload.email)
 
     if user_from_db:
-        return {"status": "Error", "message": "Email alaready in use!"}
+        raise HTTPException(status_code=409, detail="This email is already used!")
 
     hashed_password = bcrypt.hashpw(payload.password.encode("utf-8"), bcrypt.gensalt())
 
@@ -84,10 +84,11 @@ def login(payload: LoginRequest, session: Session = Depends(get_session)):
     token = create_token(user_id=user_id, role=role)
 
     if not valid_user:
-        return {
-            "status": "Error", 
-            "message": "Incorrect email or password"
-        }
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
+        # return {
+        #     "status": "Error", 
+        #     "message": "Incorrect email or password"
+        # }
     
     update_last_login(session, user_id)
     return {
