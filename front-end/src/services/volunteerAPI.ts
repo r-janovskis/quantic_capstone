@@ -1,4 +1,5 @@
 import axios, { type AxiosResponse } from "axios";
+import type { VolunteerProfileData } from "../types";
 
 interface APIResponse {
   status: string;
@@ -25,8 +26,21 @@ interface VolunteerData {
   availability: { day_id: number; time_period_id: number }[];
 }
 
-interface APIVolunteerResponse extends VolunteerData {
+interface APIVolunteerData {
   avatar_url: string | null;
+  display_name: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  date_of_birth: string;
+  area: string;
+  country_id: number;
+  shirt_size_id: number;
+  bio: string;
+  skills: { id: number; name: string }[];
+  interests: { id: number; name: string }[];
+  languages: { id: number; name: string }[];
+  availability: { day_id: number; time_period_id: number }[];
 }
 
 // BASE_URL => "http://localhost:8000/volunteer";
@@ -70,9 +84,9 @@ const uploadAvatar = async (
   return response.data;
 };
 
-const getProfile = async (token: string): Promise<APIVolunteerResponse> => {
+const getProfile = async (token: string): Promise<VolunteerProfileData> => {
   const endpoint = BASE_URL + "/me";
-  const response = await axios.get(endpoint, {
+  const response: AxiosResponse<APIVolunteerData> = await axios.get(endpoint, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -85,9 +99,44 @@ const getProfile = async (token: string): Promise<APIVolunteerResponse> => {
     }`;
   }
 
-  return volunteerData;
+  // We need to transform data so that we can keep that transformation out of the component itself
+  const profileData: VolunteerProfileData = {
+    ...volunteerData,
+    skills: volunteerData.skills.map((skill) => ({
+      value: skill.id,
+      label: skill.name,
+    })),
+    interests: volunteerData.interests.map((interest) => ({
+      value: interest.id,
+      label: interest.name,
+    })),
+    languages: volunteerData.languages.map((language) => ({
+      value: language.id,
+      label: language.name,
+    })),
+  };
+
+  return profileData;
 };
 
-const volunteerServices = { register, uploadAvatar, getProfile };
+const updateProfile = async (
+  volunteer_info: VolunteerData,
+  token: string
+): Promise<APIRegisterResponse> => {
+  const endpoint = BASE_URL + "/me";
+  const response: AxiosResponse<APIRegisterResponse> = await axios.put(
+    endpoint,
+    volunteer_info,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+const volunteerServices = { register, uploadAvatar, getProfile, updateProfile };
 
 export default volunteerServices;
