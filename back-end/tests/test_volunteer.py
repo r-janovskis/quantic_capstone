@@ -36,6 +36,9 @@ def create_test_image():
     return buf
 
 class TestVolunteerRegistrer:
+    """
+    Collection of tests for endpoint GET /volunteer/register
+    """
     
     def test_register_success(self, client):
         token = get_token(client, "volunteer@example.com")
@@ -95,7 +98,41 @@ class TestVolunteerRegistrer:
         assert response.status_code == 422
 
 
+class TestVolunteerProfile:
+    """
+    Collection of tests for endpoint GET /volunteer/me
+    """
+    
+    def test_volunteer_profile_success(self, client):
+        token = get_token(client, "volunteer@example.com")
+        response = client.get(
+            "/volunteer/me",
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert response.status_code == 200
+        assert len(response.json()) == 14
+
+    
+    def test_volunteer_profile_with_no_profile(self, client):
+        token = get_token(client, "fake_volunteer@example.com")
+        response = client.get(
+            "/volunteer/me",
+            headers={"Authorization": f"Bearer {token}"}
+        )
+
+    def test_volunteer_profile_with_invalid_token(self, client):
+        response = client.get(
+            "/volunteer/me",
+            headers={"Authorization": "Bearer INVALID_TOKEN"}
+        )
+        assert response.status_code == 401
+
+
+
 class TestVolunteerUpdate:
+    """
+    Collection of tests for endpoint PUT /volunteer/me
+    """
 
     def test_volunteer_update_successful(self, client):
         # Update some fields in volunteer profile 
@@ -158,7 +195,9 @@ class TestVolunteerUpdate:
 
 
 class TestAvatarUpload:
-
+    """
+    Collection of tests for endpoint POST /volunteer/avatar
+    """
     def test_avatar_upload_success(self, client):
         token = get_token(client, "volunteer@example.com")
         image = create_test_image()
