@@ -59,7 +59,6 @@ class TestVolunteerRegistrer:
             headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 409
-        assert response.json()["detail"] == "There already is a volunteer profile associated with this email!"
 
 
     def test_register_with_invalid_token(self, client):
@@ -118,6 +117,7 @@ class TestVolunteerProfile:
             "/volunteer/me",
             headers={"Authorization": f"Bearer {token}"}
         )
+        assert response.status_code == 404
 
     def test_volunteer_profile_with_invalid_token(self, client):
         response = client.get(

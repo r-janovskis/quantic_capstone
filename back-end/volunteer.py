@@ -11,7 +11,6 @@ from schemas.volunteerProfile import VolunteerProfile
 from schemas.availability import Availability
 from schemas.roles import Role
 from database.models.volunteer import Volunteer
-from database.repositories.user_repo import update_status
 from database.repositories.volunteer_repo import (
     create_volunteer, 
     update_volunteer, 
