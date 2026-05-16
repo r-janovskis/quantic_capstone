@@ -46,7 +46,7 @@ def signup(payload: UserRequest, session: Session = Depends(get_session)):
     user_from_db = get_user_by_email(session, payload.email)
 
     if user_from_db:
-        raise HTTPException(status_code=409, detail="This email is already used!")
+        raise HTTPException(status_code=409, detail="This email is already in use!")
 
     hashed_password = bcrypt.hashpw(payload.password.encode("utf-8"), bcrypt.gensalt())
 
@@ -64,11 +64,9 @@ def login(payload: LoginRequest, session: Session = Depends(get_session)):
     if not user_from_db:
         valid_user = False
         hashed_password: bytes = DUMMY_HASH
-        user_status = -1
         user_id = -1
     else:
         hashed_password: bytes = bytes(user_from_db.password)
-        user_status = user_from_db.status
         user_id = user_from_db.id or -1
     
     is_valid_password: bool = bcrypt.checkpw(payload.password.encode("utf-8"), hashed_password)
@@ -76,7 +74,6 @@ def login(payload: LoginRequest, session: Session = Depends(get_session)):
         valid_user = False
 
     # Token generated here as we would like to make time attacks harder to execute
-    # token = create_token(user_id)
     role = Role.NEW_USER
     if valid_user:
         if get_volunteer_by_user_id(session, user_id):
@@ -85,17 +82,13 @@ def login(payload: LoginRequest, session: Session = Depends(get_session)):
 
     if not valid_user:
         raise HTTPException(status_code=401, detail="Incorrect email or password")
-        # return {
-        #     "status": "Error", 
-        #     "message": "Incorrect email or password"
-        # }
+
     
     update_last_login(session, user_id)
     return {
         "status": "Success", 
         "message": "Login successful!", 
-        "token": token, 
-        "user_status": user_status
+        "token": token
     }
 
 

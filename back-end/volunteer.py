@@ -40,8 +40,6 @@ def sanitize_volunteer_availability(availability_slots: list[Availability]) -> l
     
     # we remove any duplicate entries 
     # by saving a copy of volunteer submitted availability as set
-    
-    
     new_availability = set(availability_slots.copy())
 
 
@@ -65,7 +63,7 @@ router = APIRouter(prefix="/volunteer", tags=["volunteer"])
 def volunteer_register(volunteer: VolunteerCreate, user_id: int = Depends(get_current_user_id), session: Session = Depends(get_session)):
 
     if get_volunteer_by_user_id(session, user_id):
-        raise HTTPException(status_code=409, detail="There already is a volunteer profile associated with this user!")
+        raise HTTPException(status_code=409, detail="There already is a volunteer profile associated with this email!")
 
     # We create a volunteer object that will be saved to database
     # We need to remove elements that will go into junction tables
@@ -79,16 +77,13 @@ def volunteer_register(volunteer: VolunteerCreate, user_id: int = Depends(get_cu
     if saved_volunteer.id is None:
         raise HTTPException(status_code=500, detail="Something went wrong, please try again later")
     
-    # Save his skills, interests, languages, and availability to database
+    # Save volunteer skills, interests, languages, and availability to database
     create_volunteer_skills(session, saved_volunteer.id, volunteer.skill_ids)
     create_volunteer_interests(session, saved_volunteer.id, volunteer.interest_ids)
     create_volunteer_languages(session, saved_volunteer.id, volunteer.language_ids)
 
     checked_availability = sanitize_volunteer_availability(volunteer.availability)
     create_volunteer_availability(session, saved_volunteer.id, checked_availability)
-    
-    # Update the status for user
-    update_status(session, user_id, 2)
 
     # Generate new token to include role
     new_token = create_token(user_id=user_id, role=Role.VOLUNTEER)
