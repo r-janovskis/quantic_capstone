@@ -3,6 +3,11 @@ type Option = {
   label: string;
 };
 
+interface LookupResponse {
+  id: number;
+  name: string;
+}
+
 type VolunteerProfileData = {
   avatar_url: string | null;
   display_name: string;
@@ -20,4 +25,4 @@ type VolunteerProfileData = {
   availability: { day_id: number; time_period_id: number }[];
 };
 
-export type { Option, VolunteerProfileData };
+export type { Option, VolunteerProfileData, LookupResponse };
