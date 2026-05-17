@@ -6,7 +6,9 @@ function VolunteerRoot() {
   return (
     <HeaderProvider>
       <Header />
-      <Outlet />
+      <main>
+        <Outlet />
+      </main>
     </HeaderProvider>
   );
 }
