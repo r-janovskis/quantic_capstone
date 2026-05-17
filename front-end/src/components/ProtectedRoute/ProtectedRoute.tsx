@@ -23,13 +23,13 @@ const ProtectedRoute = ({ requiredRole }: { requiredRole?: string }) => {
         localStorage.removeItem("token");
         setVerified(false);
       });
-  });
+  }, []);
 
   if (verified === null) {
     return "Loadning...";
   }
   if (!verified) {
-    <Navigate to="/auth/login" replace />;
+    return <Navigate to="/auth/login" replace />;
   }
   if (requiredRole) {
     const token = localStorage.getItem("token")!;
