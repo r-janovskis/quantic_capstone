@@ -63,7 +63,6 @@ function Header() {
           )}
 
           <NavDropdown id="user-dropdown" title={userDisplay.name}>
-            {/* <span className="header-display-name">{userDisplay.name}</span> */}
             <NavDropdown.Item href="/volunteer/dashboard">
               Dashboard
             </NavDropdown.Item>
