@@ -19,7 +19,7 @@ import { useHeaderRefresh } from "../../../context/HeaderContext";
 
 import "./VolunteerProfile.css";
 
-function VolunteerProfile() {
+function VolunteerProfile({ mode }: { mode: "create" | "edit" }) {
   const navigate = useNavigate();
 
   // Values we use to visualize form field validity
@@ -52,14 +52,14 @@ function VolunteerProfile() {
   // Managing selected availability slots
   const [selectedSlots, setSelectedSlots] = useState<VolunteerSlot[]>([]);
 
-  const [profileData, setProfileData] = useState<VolunteerProfileData | null>(
-    null
-  );
-
   // For displaying messages in case something went wrong while registering volunteer
   const [showMessage, setShowMessage] = useState(false);
   const [messageType, setMessageType] = useState("");
   const [APIMessage, setAPIMessage] = useState({ status: "", message: "" });
+
+  const [profileData, setProfileData] = useState<VolunteerProfileData | null>(
+    null
+  );
 
   // We define it here so we can use it later when we want to submit update
   // and refresh the header in case the user changed their display information
@@ -124,8 +124,15 @@ function VolunteerProfile() {
       };
 
       const token = localStorage.getItem("token") ?? "";
-      volunteerServices
-        .updateProfile(volunteerData, token)
+
+      // For create mode we want to hit endpoint POST /volunteer/register
+      // Everything else is pretty much the same
+      const apiCall =
+        mode === "create"
+          ? volunteerServices.register(volunteerData, token)
+          : volunteerServices.updateProfile(volunteerData, token);
+
+      apiCall
         .then((response) => {
           // Check if we need to upload avatar image too
           const avatarFile = formData.get("avatar") as File | null;
@@ -139,7 +146,11 @@ function VolunteerProfile() {
               setShowMessage(true);
             });
           }
-          refresh();
+          if (mode === "create" && response.token) {
+            localStorage.setItem("token", response.token);
+          } else {
+            refresh();
+          }
           navigate("/volunteer/dashboard");
         })
         .catch((error) => {
@@ -156,25 +167,27 @@ function VolunteerProfile() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/auth/login");
-      return;
-    }
+    if (mode === "edit") {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/auth/login");
+        return;
+      }
 
-    volunteerServices.getProfile(token).then((response) => {
-      setProfileData(response);
-      setSelectedSkills(response.skills);
-      setSelectedInterests(response.interests);
-      setSelectedLanguages(response.languages);
-      setSelectedSlots(
-        response.availability.map((slot, index) => ({
-          id: index + 1,
-          day_id: slot.day_id,
-          timePeriod_id: slot.time_period_id,
-        }))
-      );
-    });
+      volunteerServices.getProfile(token).then((response) => {
+        setProfileData(response);
+        setSelectedSkills(response.skills);
+        setSelectedInterests(response.interests);
+        setSelectedLanguages(response.languages);
+        setSelectedSlots(
+          response.availability.map((slot, index) => ({
+            id: index + 1,
+            day_id: slot.day_id,
+            timePeriod_id: slot.time_period_id,
+          }))
+        );
+      });
+    }
   }, []);
 
   const SlotWithOptions = (props: {
@@ -188,7 +201,8 @@ function VolunteerProfile() {
     />
   );
 
-  if (loading || !profileData) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>;
+  if (mode === "edit" && !profileData) return <p>Loading...</p>;
   if (error)
     return (
       <Alert variant="danger">
@@ -207,7 +221,7 @@ function VolunteerProfile() {
         <fieldset className="display-info-section">
           <h3>Display Information</h3>
           <div className="display-info-layout">
-            <AvatarUpload currentAvatar={profileData.avatar_url} />
+            <AvatarUpload currentAvatar={profileData?.avatar_url ?? ""} />
             <div className="display-name-section">
               <Form.Group>
                 <Form.Label htmlFor="display_name">Display Name</Form.Label>
@@ -215,7 +229,7 @@ function VolunteerProfile() {
                   id="display_name"
                   name="display_name"
                   type="text"
-                  defaultValue={profileData.display_name}
+                  defaultValue={profileData?.display_name ?? ""}
                   required
                 />
               </Form.Group>
@@ -231,7 +245,7 @@ function VolunteerProfile() {
                 id="first_name"
                 name="first_name"
                 type="text"
-                defaultValue={profileData.first_name}
+                defaultValue={profileData?.first_name ?? ""}
                 required
               />
             </Form.Group>
@@ -241,7 +255,7 @@ function VolunteerProfile() {
                 id="last_name"
                 name="last_name"
                 type="text"
-                defaultValue={profileData.last_name}
+                defaultValue={profileData?.last_name ?? ""}
                 required
               />
             </Form.Group>
@@ -253,7 +267,7 @@ function VolunteerProfile() {
                 name="date_of_birth"
                 type="date"
                 isInvalid={ageFeedback !== ""}
-                defaultValue={profileData.date_of_birth}
+                defaultValue={profileData?.date_of_birth ?? ""}
                 required
               />
               <Form.Control.Feedback type="invalid">
@@ -267,7 +281,7 @@ function VolunteerProfile() {
                 name="phone"
                 type="text"
                 pattern="[0-9\+\s\(\)]+"
-                defaultValue={profileData.phone}
+                defaultValue={profileData?.phone ?? ""}
                 required
               />
             </Form.Group>
@@ -277,7 +291,7 @@ function VolunteerProfile() {
                 id="area"
                 name="area"
                 type="text"
-                defaultValue={profileData.area}
+                defaultValue={profileData?.area ?? ""}
                 required
               />
               <Form.Text>City, town or region you are from</Form.Text>
@@ -287,7 +301,7 @@ function VolunteerProfile() {
               <Form.Select
                 id="country"
                 name="country"
-                defaultValue={profileData.country_id}
+                defaultValue={profileData?.country_id ?? 0}
                 required
               >
                 <option value="">Select a country</option>
@@ -348,7 +362,7 @@ function VolunteerProfile() {
               <Form.Select
                 id="shirt_size"
                 name="shirt_size"
-                defaultValue={profileData.shirt_size_id}
+                defaultValue={profileData?.shirt_size_id ?? 0}
                 required
               >
                 <option value="">Select T-shirt size</option>
@@ -372,7 +386,7 @@ function VolunteerProfile() {
               as="textarea"
               rows={5}
               placeholder="Describe yourself..."
-              defaultValue={profileData.bio}
+              defaultValue={profileData?.bio ?? ""}
               required
             />
           </Form.Group>
@@ -390,12 +404,16 @@ function VolunteerProfile() {
             onChange={setSelectedSlots}
           />
         </fieldset>
-        <div className="button-container">
-          <Button type="submit">Save Changes</Button>
-          <Button variant="secondary" onClick={() => navigate(-1)}>
-            Cancel
-          </Button>
-        </div>
+        {mode === "create" ? (
+          <Button type="submit">Create Profile</Button>
+        ) : (
+          <div className="button-container">
+            <Button type="submit">Save Changes</Button>
+            <Button variant="secondary" onClick={() => navigate(-1)}>
+              Cancel
+            </Button>
+          </div>
+        )}
       </Form>
       <Alert show={showMessage} variant={messageType}>
         <p>Status code: {APIMessage.status}</p>

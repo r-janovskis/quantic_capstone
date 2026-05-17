@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -12,12 +12,14 @@ import VolunteerAvailabilitySlot from "../VolunteerAvailabilitySlot/VolunteerAva
 import useLookupData from "../../../hooks/useLookupData";
 import volunteerServices from "../../../services/volunteerAPI";
 
-import type { Option } from "../../../types";
+import type { Option, VolunteerProfileData } from "../../../types";
 import type { VolunteerSlot } from "../VolunteerAvailabilitySlot/VolunteerAvailabilitySlot";
+
+import { useHeaderRefresh } from "../../../context/HeaderContext";
 
 import "./VolunteerForm.css";
 
-function VolunteerForm() {
+function VolunteerForm({ mode }: { mode: "create" | "edit" }) {
   const navigate = useNavigate();
 
   // Values we use to visualize form field validity
@@ -54,6 +56,14 @@ function VolunteerForm() {
   const [showMessage, setShowMessage] = useState(false);
   const [messageType, setMessageType] = useState("");
   const [APIMessage, setAPIMessage] = useState({ status: "", message: "" });
+
+  const [profileData, setProfileData] = useState<VolunteerProfileData | null>(
+    null
+  );
+
+  // We define it here so we can use it later when we want to submit update
+  // and refresh the header in case the user changed their display information
+  const { refresh } = useHeaderRefresh();
 
   const handleVolunteerFormSubmit = (
     event: React.SubmitEvent<HTMLFormElement>
@@ -114,8 +124,15 @@ function VolunteerForm() {
       };
 
       const token = localStorage.getItem("token") ?? "";
-      volunteerServices
-        .register(volunteerData, token)
+
+      // For create mode we want to hit endpoint POST /volunteer/register
+      // Everything else is pretty much the same
+      const apiCall =
+        mode === "create"
+          ? volunteerServices.register(volunteerData, token)
+          : volunteerServices.updateProfile(volunteerData, token);
+
+      apiCall
         .then((response) => {
           // Check if we need to upload avatar image too
           const avatarFile = formData.get("avatar") as File | null;
@@ -129,10 +146,12 @@ function VolunteerForm() {
               setShowMessage(true);
             });
           }
-          if (response.token) {
+          if (mode === "create" && response.token) {
             localStorage.setItem("token", response.token);
-            navigate("/volunteer/dashboard");
+          } else {
+            refresh();
           }
+          navigate("/volunteer/dashboard");
         })
         .catch((error) => {
           setMessageType("danger");
@@ -147,6 +166,30 @@ function VolunteerForm() {
     setValidated(true);
   };
 
+  useEffect(() => {
+    if (mode === "edit") {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/auth/login");
+        return;
+      }
+
+      volunteerServices.getProfile(token).then((response) => {
+        setProfileData(response);
+        setSelectedSkills(response.skills);
+        setSelectedInterests(response.interests);
+        setSelectedLanguages(response.languages);
+        setSelectedSlots(
+          response.availability.map((slot, index) => ({
+            id: index + 1,
+            day_id: slot.day_id,
+            timePeriod_id: slot.time_period_id,
+          }))
+        );
+      });
+    }
+  }, []);
+
   const SlotWithOptions = (props: {
     slot: VolunteerSlot;
     onChange: (update: VolunteerSlot) => void;
@@ -159,6 +202,7 @@ function VolunteerForm() {
   );
 
   if (loading) return <p>Loading...</p>;
+  if (mode === "edit" && !profileData) return <p>Loading...</p>;
   if (error)
     return (
       <Alert variant="danger">
@@ -177,7 +221,7 @@ function VolunteerForm() {
         <fieldset className="display-info-section">
           <h3>Display Information</h3>
           <div className="display-info-layout">
-            <AvatarUpload />
+            <AvatarUpload currentAvatar={profileData?.avatar_url ?? ""} />
             <div className="display-name-section">
               <Form.Group>
                 <Form.Label htmlFor="display_name">Display Name</Form.Label>
@@ -185,6 +229,7 @@ function VolunteerForm() {
                   id="display_name"
                   name="display_name"
                   type="text"
+                  defaultValue={profileData?.display_name ?? ""}
                   required
                 />
               </Form.Group>
@@ -200,6 +245,7 @@ function VolunteerForm() {
                 id="first_name"
                 name="first_name"
                 type="text"
+                defaultValue={profileData?.first_name ?? ""}
                 required
               />
             </Form.Group>
@@ -209,6 +255,7 @@ function VolunteerForm() {
                 id="last_name"
                 name="last_name"
                 type="text"
+                defaultValue={profileData?.last_name ?? ""}
                 required
               />
             </Form.Group>
@@ -220,6 +267,7 @@ function VolunteerForm() {
                 name="date_of_birth"
                 type="date"
                 isInvalid={ageFeedback !== ""}
+                defaultValue={profileData?.date_of_birth ?? ""}
                 required
               />
               <Form.Control.Feedback type="invalid">
@@ -233,17 +281,29 @@ function VolunteerForm() {
                 name="phone"
                 type="text"
                 pattern="[0-9\+\s\(\)]+"
+                defaultValue={profileData?.phone ?? ""}
                 required
               />
             </Form.Group>
             <Form.Group className="entry-volunteer">
               <Form.Label htmlFor="area">City/Town/Region</Form.Label>
-              <Form.Control id="area" name="area" type="text" required />
+              <Form.Control
+                id="area"
+                name="area"
+                type="text"
+                defaultValue={profileData?.area ?? ""}
+                required
+              />
               <Form.Text>City, town or region you are from</Form.Text>
             </Form.Group>
             <Form.Group className="entry-volunteer">
               <Form.Label htmlFor="country">Country</Form.Label>
-              <Form.Select id="country" name="country" required>
+              <Form.Select
+                id="country"
+                name="country"
+                defaultValue={profileData?.country_id ?? 0}
+                required
+              >
                 <option value="">Select a country</option>
                 {countries.map((country) => {
                   return (
@@ -299,7 +359,12 @@ function VolunteerForm() {
               <Form.Label htmlFor="shirt_size">
                 What t-shirt size do you prefer?
               </Form.Label>
-              <Form.Select id="shirt_size" name="shirt_size" required>
+              <Form.Select
+                id="shirt_size"
+                name="shirt_size"
+                defaultValue={profileData?.shirt_size_id ?? 0}
+                required
+              >
                 <option value="">Select T-shirt size</option>
                 {shirtSizes.map((size) => {
                   return (
@@ -321,6 +386,7 @@ function VolunteerForm() {
               as="textarea"
               rows={5}
               placeholder="Describe yourself..."
+              defaultValue={profileData?.bio ?? ""}
               required
             />
           </Form.Group>
@@ -334,10 +400,20 @@ function VolunteerForm() {
               day_id: null,
               timePeriod_id: null,
             })}
+            initialSlots={selectedSlots}
             onChange={setSelectedSlots}
           />
         </fieldset>
-        <Button type="submit">Create Profile</Button>
+        {mode === "create" ? (
+          <Button type="submit">Create Profile</Button>
+        ) : (
+          <div className="button-container">
+            <Button type="submit">Save Changes</Button>
+            <Button variant="secondary" onClick={() => navigate(-1)}>
+              Cancel
+            </Button>
+          </div>
+        )}
       </Form>
       <Alert show={showMessage} variant={messageType}>
         <p>Status code: {APIMessage.status}</p>
