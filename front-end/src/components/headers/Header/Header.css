@@ -38,3 +38,12 @@ header {
   color: black;
   border-radius: 0.5rem;
 }
+
+.logout-link {
+  color: red;
+}
+
+.logout-link:hover {
+  color: red;
+  background-color: rgba(248, 131, 131, 0.1);
+}

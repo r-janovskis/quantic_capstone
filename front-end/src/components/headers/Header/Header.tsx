@@ -2,17 +2,17 @@ import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
 import volunteerServices from "../../../services/volunteerAPI";
 import { getTokenRole } from "../../../utils/token";
 import { ROLES } from "../../../constants/roles";
 import { useHeaderRefresh } from "../../../context/HeaderContext";
+import VolunteerHeaderDisplay from "../VolunteerHeaderNav/VolunteerHeaderNav";
 
 import "./Header.css";
 
 function Header() {
   const [userDisplay, setUserDisplay] = useState<{
+    role: string;
     name: string;
     avatar_url?: string;
   } | null>(null);
@@ -26,11 +26,15 @@ function Header() {
     }
 
     const role = getTokenRole(token);
-    if (role === ROLES.VOLUNTEER) {
+    // If the user is a volunteer or an organiser
+    // we want to display their name and avatar in the top-right corner
+    // So we set state and gather role too (as drop-down options might be different for each role)
+    if (role === ROLES.VOLUNTEER || role === ROLES.ORGANISER) {
       volunteerServices
         .getProfile(token)
         .then((response) => {
           setUserDisplay({
+            role: role,
             name: response.display_name,
             avatar_url: response.avatar_url,
           });
@@ -40,8 +44,6 @@ function Header() {
           localStorage.removeItem("token");
         });
     }
-    // When we have organisers set up we will have another if or expanded
-    // if/else block to handle organisers
   }, [refreshKey]);
 
   return (
@@ -49,34 +51,7 @@ function Header() {
       <NavLink to="/" className="header-title">
         Caritas Volunteers
       </NavLink>
-      {userDisplay ? (
-        <Nav className="main-navigation-bar">
-          <Navbar.Toggle aria-controls="user-dropdown" />
-          {userDisplay.avatar_url && (
-            <Navbar.Brand href="/volunteer/dashboard">
-              <img
-                src={userDisplay.avatar_url}
-                alt="avatar"
-                className="header-avatar"
-              />
-            </Navbar.Brand>
-          )}
-
-          <NavDropdown id="user-dropdown" title={userDisplay.name}>
-            <NavDropdown.Item href="/volunteer/dashboard">
-              Dashboard
-            </NavDropdown.Item>
-            <NavDropdown.Item href="/volunteer/me">Profile</NavDropdown.Item>
-            <NavDropdown.Divider />
-            <NavDropdown.Item
-              href="/"
-              onClick={() => localStorage.removeItem("token")}
-            >
-              Logout
-            </NavDropdown.Item>
-          </NavDropdown>
-        </Nav>
-      ) : (
+      {!userDisplay ? (
         <Nav className="main-navigation-bar">
           <NavLink to="/auth/login">
             <Button variant="primary">Login</Button>
@@ -86,6 +61,13 @@ function Header() {
             Sign up
           </NavLink>
         </Nav>
+      ) : userDisplay.role === ROLES.VOLUNTEER ? (
+        <VolunteerHeaderDisplay
+          name={userDisplay.name}
+          avatar_url={userDisplay.avatar_url}
+        />
+      ) : (
+        <p>Here we will have component OrganiserHeaderDisplay</p>
       )}
     </header>
   );
