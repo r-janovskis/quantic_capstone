@@ -45,3 +45,9 @@ form {
 .registration-form {
   margin: 2rem auto;
 }
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}

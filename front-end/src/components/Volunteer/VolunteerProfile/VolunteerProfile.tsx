@@ -390,10 +390,12 @@ function VolunteerProfile() {
             onChange={setSelectedSlots}
           />
         </fieldset>
-        <Button type="submit">Save Changes</Button>
-        <Button variant="secondary" onClick={() => navigate(-1)}>
-          Cancel
-        </Button>
+        <div className="button-container">
+          <Button type="submit">Save Changes</Button>
+          <Button variant="secondary" onClick={() => navigate(-1)}>
+            Cancel
+          </Button>
+        </div>
       </Form>
       <Alert show={showMessage} variant={messageType}>
         <p>Status code: {APIMessage.status}</p>
