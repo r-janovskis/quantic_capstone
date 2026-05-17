@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import lookupServices from "../services/lookupAPI";
 
-import type { Option } from "../types";
+import type { Option, LookupResponse } from "../types";
 
 function useLookupData() {
   const [loading, setLoading] = useState(true);
@@ -15,16 +15,27 @@ function useLookupData() {
   const [days, setDays] = useState<Option[]>([]);
   const [timePeriods, setTimePeriods] = useState<Option[]>([]);
 
+  // This is a list of all the lookup
+  // Order in this list needs to match the order in which the API returns the data
+  // look at list under .then()
+  const LOOKUP_OPTIONS = [
+    "skills",
+    "interests",
+    "languages",
+    "countries",
+    "shirt_sizes",
+    "days",
+    "time_periods",
+  ] as const;
+
+  // Helper function to map lookup data to options
+  const mapToOptions = (data: LookupResponse[]) =>
+    data.map((item) => ({ value: item.id, label: item.name }));
+
   useEffect(() => {
-    Promise.all([
-      lookupServices.getSkills(),
-      lookupServices.getInterests(),
-      lookupServices.getLanguages(),
-      lookupServices.getCountries(),
-      lookupServices.getShirtSizes(),
-      lookupServices.getDays(),
-      lookupServices.getTimePeriods(),
-    ])
+    Promise.all(
+      LOOKUP_OPTIONS.map((option) => lookupServices.getLookupData(option))
+    )
       .then(
         ([
           skills,
@@ -35,45 +46,13 @@ function useLookupData() {
           days,
           timePeriods,
         ]) => {
-          setSkills(
-            skills.map((skill) => ({ value: skill.id, label: skill.name }))
-          );
-          setInterests(
-            interests.map((interests) => ({
-              value: interests.id,
-              label: interests.name,
-            }))
-          );
-          setLanguages(
-            languages.map((languages) => ({
-              value: languages.id,
-              label: languages.name,
-            }))
-          );
-          setCountries(
-            countries.map((country) => ({
-              value: country.id,
-              label: country.name,
-            }))
-          );
-          setShirtSizes(
-            shirtSizes.map((shirtSize) => ({
-              value: shirtSize.id,
-              label: shirtSize.name,
-            }))
-          );
-          setDays([
-            ...days.map((day) => ({
-              value: day.id,
-              label: day.name,
-            })),
-          ]);
-          setTimePeriods([
-            ...timePeriods.map((timePeriod) => ({
-              value: timePeriod.id,
-              label: timePeriod.name,
-            })),
-          ]);
+          setSkills(mapToOptions(skills));
+          setInterests(mapToOptions(interests));
+          setLanguages(mapToOptions(languages));
+          setCountries(mapToOptions(countries));
+          setShirtSizes(mapToOptions(shirtSizes));
+          setDays(mapToOptions(days));
+          setTimePeriods(mapToOptions(timePeriods));
           setLoading(false);
         }
       )
