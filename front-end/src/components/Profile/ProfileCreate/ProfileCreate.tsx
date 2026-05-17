@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Form from "react-bootstrap/Form";
-import VolunteerForm from "../../Volunteer/VolunteerForm/VolunteerForm";
+import VolunteerProfile from "../../Volunteer/VolunteerProfile/VolunteerProfile";
 
 import "./ProfileCreate.css";
 
@@ -47,7 +47,7 @@ function ProfileCreate() {
           </ul>
         </Form.Text>
       </fieldset>
-      {profileType === "volunteer" && <VolunteerForm />}
+      {profileType === "volunteer" && <VolunteerProfile mode="create" />}
       {profileType === "organiser" && (
         <Form>
           <fieldset className="organiser-form">

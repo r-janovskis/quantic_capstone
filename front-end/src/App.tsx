@@ -37,7 +37,7 @@ function App() {
           <Route element={<ProtectedRoute requiredRole={ROLES.VOLUNTEER} />}>
             <Route path={"volunteer"} element={<VolunteerRoot />}>
               <Route path="dashboard" element={<VolunteerDashboard />} />
-              <Route path="me" element={<VolunteerProfile />} />
+              <Route path="me" element={<VolunteerProfile mode="edit" />} />
             </Route>
           </Route>
         </Route>
